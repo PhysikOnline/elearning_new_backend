@@ -1,11 +1,20 @@
+# Requirements
+
+- npm
+- node
+- nodemon (sudo npm install -g nodemon)
+
 # Recommendet Requirements
-- vscode (Extensions: Docker, Prettier)
+
+- vscode (Extensions: Prettier)
 - MySQL Workbench
 - Postman
 
 # Before you start
+
 Make shure, that you inserted your firstname in "database" under `./backend/sql/credentials.js`. So when you firstname is Albert, it should look like this:
-```js
+
+````js
 const options = {
     host: '141.2.246.162',
     user: 'elearning',
@@ -20,7 +29,7 @@ The connetion of the database is specified inside `/db/db.js`. The database init
 
 ```js
 var sql = require("./db/db.js");
-```
+````
 
 queries can the be executed with:
 
@@ -35,15 +44,34 @@ Documentation for MariaDB(SQL) and the MySQL Connector can be found here:
 - https://mariadb.com/kb/en/library/documentation/
 - https://github.com/mysqljs/mysql
 
+# Start the Project
+
+Before starting the project, you need to install all needed packages:
+
+```
+npm install
+```
+
+After a sucsessfull install (Some package installs result in some warnings, but these can be connected, that you are not using a Mac) do:
+
+```
+npm run start
+```
+
 # Session Tutorial
+
 We use express-session (https://www.npmjs.com/package/express-session) to create an manage sessions. The client gets a `sessionID`. With that `sessionID` can be data associated (i.e. username) wich would normally be stored in the local storage of our server. I say normally, because we use the mysql extension of express-session (https://www.npmjs.com/package/express-mysql-session) wich allows us to store the data in our database, that enables us to use multiple servers for load balancing and persist sessions after server restarts. The session data (here username) can be accessed with:
+
 ```
 req.session.username
 ```
+
 I would recommend to read the documentation of express-session.
 
 # API Documentation:
+
 ## /user
+
 ### POST /user/login
 
 | Attribute | Type   | Required | Describtion                           |
@@ -67,7 +95,6 @@ I would recommend to read the documentation of express-session.
 | ------------------------ | ------------------------------------ |
 | Sucsessfully logged out  | the session was sucsessfully removed |
 | ERROR: No User logged in | user not logged in, please log in    |
-
 
 # Todo
 
