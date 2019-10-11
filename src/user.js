@@ -38,4 +38,12 @@ router.post("/logout", function(req, res) {
   }
 });
 
+router.get("/checklogin", function(req, res) {
+  if (!req.session.username) {
+    res.status(200).send("false");
+  } else {
+    res.status(200).send("true");
+  }
+});
+
 module.exports = router;
