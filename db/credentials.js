@@ -3,6 +3,6 @@ const options = {
   user: "elearning",
   port: "3306",
   password: "elearningpw",
-  database: "keiwan"
+  database: "elearning"
 };
 module.exports = options;
