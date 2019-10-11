@@ -3,6 +3,7 @@
 - npm
 - node
 - nodemon (sudo npm install -g nodemon)
+- [frontend](https://github.com/PhysikOnline/elearning_new_frontend)
 
 # Recommendet Requirements
 
