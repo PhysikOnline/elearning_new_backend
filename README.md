@@ -97,6 +97,17 @@ I would recommend to read the documentation of express-session.
 | Sucsessfully logged out  | the session was sucsessfully removed |
 | ERROR: No User logged in | user not logged in, please log in    |
 
+### GET /user/checklogin
+
+| Attribute | Type | Required | Describtion |
+| --------- | ---- | -------- | ----------- |
+| -         | -    | -        | -           |
+
+| Response | Describtion                                     |
+| -------- | ----------------------------------------------- |
+| true     | the session is assiciated with a logged in user |
+| false    | there is no user belonging to this session      |
+
 # Todo
 
 - Figure out how to do a proper "close connection"
