@@ -1,12 +1,20 @@
 INSERT INTO `User`
 (`s-Nummer`, `password`)
 VALUES
-("s0000000", PASSWORD("s0000000"));
-INSERT INTO `User`
-(`s-Nummer`, `password`)
+("s0000000", PASSWORD("s0000000")), ("s0000001", PASSWORD("s0000001")), ("s0000002", PASSWORD("s0000002"));
+
+
+INSERT INTO `Semester`
+(`Semester`)
 VALUES
-("s0000001", PASSWORD("s0000001"));
-INSERT INTO `User`
-(`s-Nummer`, `password`)
+("WiSe 19/20"),("SoSe 19");
+
+
+INSERT INTO `elearning`.`Course`
+(`Name`,
+`Semester`)
 VALUES
-("s0000002", PASSWORD("s0000002"));
+("Grundlagen in Mobbing 2", "WiSe 19/20"),
+("Opferdarstellung 1", "SoSe 19"),
+("Grundlagen in Mobbing 1", "SoSe 19"),
+("Opferdarstellung 2", "WiSe 19/20"),("Psychologie der erfolgreichen Erpressung 1", "SoSe 19");
