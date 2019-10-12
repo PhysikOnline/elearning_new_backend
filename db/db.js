@@ -13,12 +13,6 @@ var pool = mysql.createPool({
   multipleStatements: true
 });
 
-// connection.connect(function(error) {
-//   if (error) {
-//     throw error;
-//   }
-// });
-
 pool.getConnection(function(err, connection) {
   if (err) throw err; // not connected!
 
