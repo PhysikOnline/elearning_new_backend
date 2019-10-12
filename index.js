@@ -7,6 +7,7 @@ var session = require("express-session");
 var MySQLStore = require("express-mysql-session")(session);
 // import routing
 var user = require("./src/user");
+var course = require("./src/course");
 // import mysql credentials
 const credentials = require("./db/credentials");
 
@@ -32,5 +33,7 @@ app.use(
 
 // setup router
 app.use("/user", user);
+
+app.use("/course", course);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

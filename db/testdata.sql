@@ -17,4 +17,5 @@ VALUES
 ("Grundlagen in Mobbing 2", "WiSe 19/20"),
 ("Opferdarstellung 1", "SoSe 19"),
 ("Grundlagen in Mobbing 1", "SoSe 19"),
-("Opferdarstellung 2", "WiSe 19/20"),("Psychologie der erfolgreichen Erpressung 1", "SoSe 19");
+("Opferdarstellung 2", "WiSe 19/20"),("Psychologie der erfolgreichen Erpressung 1", "SoSe 19"),
+("Gewaltsamer Überfall für Fortgeschrittene", "WiSe 19/20");

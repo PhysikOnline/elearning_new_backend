@@ -108,7 +108,43 @@ I would recommend to read the documentation of express-session.
 | true     | the session is assiciated with a logged in user |
 | false    | there is no user belonging to this session      |
 
+### GET /course/getallcourses
+
+| Attribute | Type | Required | Describtion |
+| --------- | ---- | -------- | ----------- |
+| -         | -    | -        | -           |
+
+Response:  
+Getting an array of objects which are sorted by semester. The objects include names of courses for each semester.
+
+#### Example
+
+```JSON
+[
+    {
+        "Semester": "WiSe 19/20",
+        "Name": [
+            "Gewaltsamer Überfall für Fortgeschrittene",
+            "Grundlagen in Mobbing 2",
+            "Opferdarstellung 2"
+        ]
+    },
+    {
+        "Semester": "SoSe 19",
+        "Name": [
+            "Grundlagen in Mobbing 1",
+            "Opferdarstellung 1",
+            "Psychologie der erfolgreichen Erpressung 1"
+        ]
+    }
+]
+```
+
 # Todo
 
 - Figure out how to do a proper "close connection"
 - Find out, why there are SQL disconnecs after a few minutes
+
+```
+
+```
