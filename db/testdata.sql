@@ -5,9 +5,9 @@ VALUES
 
 
 INSERT INTO `Semester`
-(`Semester`)
+(`Semester`, `Ordering`)
 VALUES
-("WiSe 19/20"),("SoSe 19");
+("SoSe 19", 1),("WiSe 19/20", 2);
 
 
 INSERT INTO `Course`
