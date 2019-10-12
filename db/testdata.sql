@@ -10,7 +10,7 @@ VALUES
 ("WiSe 19/20"),("SoSe 19");
 
 
-INSERT INTO `elearning`.`Course`
+INSERT INTO `Course`
 (`Name`,
 `Semester`)
 VALUES
