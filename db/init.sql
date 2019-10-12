@@ -11,7 +11,9 @@ CREATE TABLE `User` (
 
 CREATE TABLE `Semester` (
   `Semester` varchar(10) NOT NULL,
-  PRIMARY KEY (`Semester`)
+  `Ordering` INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`Semester`),
+  UNIQUE (`Ordering`)
 );
 
 CREATE TABLE `Course` (
