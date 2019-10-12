@@ -4,7 +4,7 @@ var mysql = require("mysql");
 var fs = require("fs");
 const credentials = require("./credentials");
 
-var connection = mysql.createConnection({
+var pool = mysql.createPool({
   host: credentials.host,
   user: credentials.user,
   port: credentials.port,
@@ -13,23 +13,32 @@ var connection = mysql.createConnection({
   multipleStatements: true
 });
 
-connection.connect();
+// connection.connect(function(error) {
+//   if (error) {
+//     throw error;
+//   }
+// });
 
-// Execute the database initialisation
-connection.query(fs.readFileSync("db/init.sql").toString(), function(
-  error,
-  results,
-  fields
-) {
-  if (error) throw error;
+pool.getConnection(function(err, connection) {
+  if (err) throw err; // not connected!
+
+  // Execute the database initialisation
+  connection.query(fs.readFileSync("db/init.sql").toString(), function(
+    error,
+    results,
+    fields
+  ) {
+    if (error) throw error;
+  });
+
+  connection.query(fs.readFileSync("db/testdata.sql").toString(), function(
+    error,
+    results,
+    fields
+  ) {
+    if (error) throw error;
+  });
+  connection.release();
 });
 
-connection.query(fs.readFileSync("db/testdata.sql").toString(), function(
-  error,
-  results,
-  fields
-) {
-  if (error) throw error;
-});
-
-module.exports = connection;
+module.exports = pool;
