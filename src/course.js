@@ -7,7 +7,7 @@ router.use(function(req, res, next) {
   next();
 });
 
-router.get("/getallcourses", function(req, res) {
+router.get("/allcourses", function(req, res) {
   sql.query(
     "SELECT C.Semester, C.Name FROM Course C, Semester S WHERE C.Semester = S.Semester ORDER BY S.Ordering DESC",
     function(error, results, fields) {

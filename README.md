@@ -108,7 +108,7 @@ I would recommend to read the documentation of express-session.
 | true     | the session is assiciated with a logged in user |
 | false    | there is no user belonging to this session      |
 
-### GET /course/getallcourses
+### GET /course/allcourses
 
 | Attribute | Type | Required | Describtion |
 | --------- | ---- | -------- | ----------- |
