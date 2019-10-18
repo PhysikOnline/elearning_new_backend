@@ -7,10 +7,34 @@ router.use(function(req, res, next) {
   next();
 });
 
+router.post("/insertdescription", function(req, res) {
+  sql.query(
+    "SELECT Permissions FROM `CoursePermissions` WHERE `Semester` = ? AND `Name` = ? AND `Login` = ?",
+    [req.query.Semester, req.query.Name, req.session.username],
+    function(error, results, fields) {
+      if (error) throw error;
+      if (results.length === 0) {
+        res.status(200).send("ERROR: No Course with Assigned User found");
+      } else if (results[0].Permissions === "admin") {
+        sql.query(
+          "UPDATE `Course` SET `Description` = ? WHERE `Semester` = ? and `Name` = ?",
+          [req.query.Description, req.query.Semester, req.query.Name],
+          function(errorUpdate, resultsUpdate, fieldsUpdate) {
+            if (errorUpdate) throw errorUpdate;
+            res.status(200).send("Sucsessfull");
+          }
+        );
+      } else {
+        res.status(200).send("Wrong permissions");
+      }
+    }
+  );
+});
+
 router.get("/coursecontent", function(req, res) {
   sql.query(
     // fetch course data
-    "SELECT `Semester`, `Name` FROM `Course` WHERE `Semester` = ? AND `Name` = ?",
+    "SELECT `Semester`, `Name`, `Description` FROM `Course` WHERE `Semester` = ? AND `Name` = ?",
     [req.query.Semester, req.query.Name],
     function(error, results, fields) {
       if (error) throw error;

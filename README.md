@@ -170,6 +170,20 @@ For the authentication in the course we send an array of permissions. To verify 
 courseVarriable.auth.inculudes("admin");
 ```
 
+### POST /course/insertdescription
+
+| Attribute   | Type                         | Required | Describtion               |
+| ----------- | ---------------------------- | -------- | ------------------------- |
+| Semester    | String                       | yes      | Semester of the course    |
+| Name        | string                       | yes      | Module name of the course |
+| Description | html(but it is not verified) | yes      | The Description in HTML   |
+
+| Response                                  | Describtion                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------- |
+| ERROR: No Course with Assigned User found | The user has no permissions on the used course (not even the "user" permission) |
+| Wrong permissions                         | The user has not the "admin" permission                                         |
+| Sucsessfull                               | The description was sucsessfully changed                                        |
+
 # Todo
 
 - Figure out how to do a proper "close connection"
