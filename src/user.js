@@ -12,7 +12,7 @@ router.post("/login", function(req, res) {
     res.status(200).send("ERROR: User already logged in");
   } else {
     sql.query(
-      "SELECT * FROM `User` WHERE `s-Nummer` = ? AND password = PASSWORD(?)",
+      "SELECT * FROM `User` WHERE `Login` = ? AND password = PASSWORD(?)",
       [req.query.username, req.query.password],
       function(error, results, fields) {
         if (error) throw error;
