@@ -140,11 +140,37 @@ Getting an array of objects which are sorted by semester. The objects include na
 ]
 ```
 
+### GET /course/coursecontent
+
+| Attribute | Type   | Required | Describtion               |
+| --------- | ------ | -------- | ------------------------- |
+| Semester  | string | yes      | Semester of the course    |
+| Name      | string | yes      | Module name of the course |
+
+| Response                      | Describtion                            |
+| ----------------------------- | -------------------------------------- |
+| `{ error: "No course found"}` | There is no with that Semester an Name |
+
+There is just one error response. An example response could be:
+
+```JSON
+{
+    "Semester": "WiSe 19/20",
+    "Name": "Grundlagen in Mobbing 2",
+    "auth": [
+        "user",
+        "admin"
+    ]
+}
+```
+
+For the authentication in the course we send an array of permissions. To verify it in the frontend you can do:
+
+```js
+courseVarriable.auth.inculudes("admin");
+```
+
 # Todo
 
 - Figure out how to do a proper "close connection"
 - Find out, why there are SQL disconnecs after a few minutes
-
-```
-
-```
