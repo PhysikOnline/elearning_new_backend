@@ -185,6 +185,3 @@ courseVarriable.auth.inculudes("admin");
 | Sucsessfull                               | The description was sucsessfully changed                                        |
 
 # Todo
-
-- Figure out how to do a proper "close connection"
-- Find out, why there are SQL disconnecs after a few minutes
