@@ -12,14 +12,14 @@ VALUES
 
 INSERT INTO `Course`
 (`Name`,
-`Semester`)
+`Semester`, `Description`)
 VALUES
-("Grundlagen in Mobbing 2", "WiSe 19/20"),
-("Opferdarstellung 1", "SoSe 19"),
-("Grundlagen in Mobbing 1", "SoSe 19"),
-("Opferdarstellung 2", "WiSe 19/20"),
-("Psychologie der erfolgreichen Erpressung 1", "SoSe 19"),
-("Gewaltsamer Überfall für Fortgeschrittene", "WiSe 19/20");
+("Grundlagen in Mobbing 2", "WiSe 19/20", "<p>Hier sollte eine schöne beschreibung stehen!!!</p>"),
+("Opferdarstellung 1", "SoSe 19", "<p>Hier sollte eine schöne beschreibung stehen!!!</p>"),
+("Grundlagen in Mobbing 1", "SoSe 19", "<p>Hier sollte eine schöne beschreibung stehen!!!</p>"),
+("Opferdarstellung 2", "WiSe 19/20", "<p>Hier sollte eine schöne beschreibung stehen!!!</p>"),
+("Psychologie der erfolgreichen Erpressung 1", "SoSe 19", "<p>Hier sollte eine schöne beschreibung stehen!!!</p>"),
+("Gewaltsamer Überfall für Fortgeschrittene", "WiSe 19/20", "<p>Hier sollte eine schöne beschreibung stehen!!!</p>");
 
 INSERT INTO `CoursePermissions`
 (`Name`,

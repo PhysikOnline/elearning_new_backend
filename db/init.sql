@@ -21,6 +21,7 @@ CREATE TABLE `Semester` (
 CREATE TABLE `Course` (
   `Name` varchar(60) NOT NULL,
   `Semester` varchar(10) NOT NULL,
+  `Description` LONGTEXT NULL,
   PRIMARY KEY (`Name`, `Semester`),
   FOREIGN KEY (`Semester`) REFERENCES `Semester`(`Semester`)
 );
