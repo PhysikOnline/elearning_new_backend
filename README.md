@@ -13,7 +13,7 @@
 
 # Before you start
 
-Make shure, that you inserted your firstname in "database" under `./backend/sql/credentials.js`. So when you firstname is Albert, it should look like this:
+Make shure, that you inserted your firstname in "database" under `./db/credentials.js`. So when you firstname is Albert, it should look like this:
 
 ````js
 const options = {
