@@ -9,7 +9,7 @@ router.use(function(req, res, next) {
 });
 
 /**
- * function wich checks the login and stores the username into the session
+ * function which checks the login and stores the username into the session
  */
 router.post("/login", function(req, res) {
   // check, if a user is already logged in
@@ -19,7 +19,7 @@ router.post("/login", function(req, res) {
   } else {
     sql.query(
       /* select user from the database with the matching password, 
-      wich is stored in the databse with a hash. */
+      which is stored in the databse with a hash. */
       "SELECT * FROM `User` WHERE `Login` = ? AND password = PASSWORD(?)",
       [req.query.username, req.query.password],
       function(error, results, fields) {
