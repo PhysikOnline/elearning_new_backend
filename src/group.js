@@ -85,4 +85,37 @@ router.post("/tooglegrouptimeractive", function(req, res) {
   );
 });
 
+router.post("/grouptimer", function(req, res) {
+  sql.query(
+    // check permissions of the course
+    "SELECT Permissions FROM `CoursePermissions` WHERE `Semester` = ? AND `Name` = ? AND `Login` = ?",
+    [req.query.Semester, req.query.Name, req.session.username],
+    function(error, results, fields) {
+      // error handling
+      if (error) throw error;
+      // check if a user has any permissions to the course
+      if (results.length === 0) {
+        // respond with no assigned permissions
+        res.status(200).send("ERROR: No Course with Assigned User found");
+        // chekc if the user has admin permission on the course
+      } else if (results[0].Permissions === "admin") {
+        sql.query(
+          /* Insert the new course time into the database */
+          "UPDATE `Course` SET `GroupTimer` = ? WHERE `Name` = ? AND `Semester` = ?",
+          [req.query.Time, req.query.Name, req.query.Semester],
+          function(errorUpdate, resultsUpdate, fieldsUpdate) {
+            // error handling
+            if (errorUpdate) throw errorUpdate;
+            /* respond that the groupVisibility got toggled if GroupTimerActive 
+            was 0 */
+            res.status(200).send("Sucsessfull If GroupVisible was 0");
+          }
+        );
+      } else {
+        // respond, that the user has the wrong permissions
+        res.status(200).send("Wrong permissions");
+      }
+    }
+  );
+});
 module.exports = router;
