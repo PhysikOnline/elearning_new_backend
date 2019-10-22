@@ -66,7 +66,7 @@ router.get("/coursecontent", function(req, res) {
         res.status(200).send({ error: "No course found" });
       } else {
         // store the results in an extra varriable
-        course = results[0];
+        let course = results[0];
         /* fetch the user permissions, this is to handle the content in the 
         frontend */
         sql.query(
