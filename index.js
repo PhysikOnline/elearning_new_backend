@@ -2,6 +2,8 @@
 const express = require("express");
 const app = express();
 const port = 3001;
+// import error handling middleware
+const errorHandling = require("./apiFunctions/errorHandling");
 // import session management
 var session = require("express-session");
 var MySQLStore = require("express-mysql-session")(session);
@@ -46,8 +48,10 @@ app.use(
 
 // setup router
 app.use("/user", user);
-
 app.use("/course", course);
+
+// errorHandling
+app.use(errorHandling);
 
 // start the app
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

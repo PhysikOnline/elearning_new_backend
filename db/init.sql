@@ -15,7 +15,8 @@ DROP TABLE IF EXISTS `Sessions`;
 CREATE TABLE `User` (
   `Login` char(8) NOT NULL,
   `password` char(41) NULL,
-  PRIMARY KEY (`Login`)
+  PRIMARY KEY (`Login`),
+  CHECK(`Login` RLIKE "^[a-z0-9]{1,8}$")
 );
 
 CREATE TABLE `Semester` (
@@ -56,10 +57,35 @@ CREATE TABLE `CoursePermissions` (
 CREATE TABLE `Groups` (
   `CourseName` varchar(60) NOT NULL,
   `Semester` varchar(10) NOT NULL,
-  `GroupName` varchar(20) NULL,
+  `GroupName` varchar(20) NOT NULL,
+  `Tutor` char(8) NULL,
   `Ordering` INT NOT NULL UNIQUE AUTO_INCREMENT,
+  `Starttime` TIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Weekday` CHAR(2) NOT NULL DEFAULT "Mo",
+  `Endtime` TIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Maxuser` INT NOT NULL DEFAULT 15,
+  `Room` varchar(15) NOT NULL DEFAULT "",
   PRIMARY KEY (`CourseName`, `Semester`, `GroupName`),
-  FOREIGN KEY (`CourseName`, `Semester`) REFERENCES `Course`(`Name`, `Semester`) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (`CourseName`, `Semester`) REFERENCES `Course`(`Name`, `Semester`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`Tutor`) REFERENCES `User`(`Login`) ON DELETE
+  SET
+    NULL ON UPDATE CASCADE,
+    CONSTRAINT `constraint_GroupName` CHECK(
+      `GroupName` RLIKE "^[ÄÖÜäöüßA-Za-z0-9 ]{3,20}$"
+    ),
+    CONSTRAINT `constraint_Starttime` CHECK(
+      `Starttime` < "23:59:59"
+      AND `Starttime` > "00:00:00"
+    ),
+    CONSTRAINT `constraint_Endtime` CHECK(
+      `Endtime` < "23:59:59"
+      AND `Starttime` > "00:00:00"
+    ),
+    CONSTRAINT `constraint_Weekday` CHECK(
+      `Weekday` IN ("Mo", "Di", "Mi", "Do", "Fr")
+    ),
+    -- Implement user constraint
+    CHECK(`Maxuser` > 0)
 );
 
 CREATE TABLE `GroupUser` (

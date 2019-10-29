@@ -109,25 +109,34 @@ VALUES
     );
 
 INSERT INTO
-    `Groups` (`CourseName`, `Semester`, `GroupName`)
+    `Groups` (
+        `CourseName`,
+        `Semester`,
+        `GroupName`,
+        `Tutor`
+    )
 VALUES
     (
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
-        "Gruppe 1"
+        "Gruppe 1",
+        "s0000002"
     ),
     (
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
-        "Gruppe 2"
+        "Gruppe 2",
+        "s0000002"
     ),
     (
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
-        "Gruppe 3"
+        "Gruppe 3",
+        "s0000002"
     ),
     (
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
-        "Gruppe 4"
+        "Gruppe 4",
+        "s0000002"
     )
