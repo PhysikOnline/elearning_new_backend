@@ -3,7 +3,7 @@ function errorHandling(error, req, res, next) {
   if (error.MS) {
     res.send({ error: error.MS });
   } else {
-    res.send({ error: "something went wrong, pleas contect the maintainer!" });
+    res.send({ error: error.message });
   }
 }
 
