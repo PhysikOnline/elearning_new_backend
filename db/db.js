@@ -30,6 +30,7 @@ pool.getConnection(function(err, connection) {
   ) {
     // error hanling
     if (error) throw error;
+    console.log("finished initializing database");
   });
 
   // fill the databse with test data
@@ -40,6 +41,7 @@ pool.getConnection(function(err, connection) {
   ) {
     // error handling
     if (error) throw error;
+    console.log("finished filling database");
   });
   // release the connection back to the pool so other functions can use it again
   connection.release();
