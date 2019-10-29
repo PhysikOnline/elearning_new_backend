@@ -121,39 +121,26 @@ router.post("/grouptimer", function(req, res, next) {
 });
 
 router.get("/groupcontent", function(req, res, next) {
-  sql.query(
-    // check permissions of the course
-    "SELECT Permissions FROM `CoursePermissions` WHERE `Semester` = ? AND `Name` = ? AND `Login` = ?",
-    [req.query.Semester, req.query.Name, req.session.username],
-    function(error, results, fields) {
-      // error handling
-      if (error) throw error;
-      // check if a user has any permissions to the course
-      if (results.length === 0) {
-        // respond with no assigned permissions
-        res.status(200).send("ERROR: No Course with Assigned User found");
-        // chekc if the user has admin permission on the course
-      } else if (
-        results[0].Permissions === "admin" ||
-        results[0].Permissions === "user"
-      ) {
-        sql.query(
-          /* Select groups from database */
-          "SELECT `GroupName`, `Tutor`, `Ordering`,`Starttime`, `Endtime`, `Weekday`, `Maxuser`, `Room` FROM `Groups` WHERE `CourseName` = ? AND `Semester` = ?",
-          [req.query.Name, req.query.Semester],
-          function(errorGroups, resultsGroups, fieldsGroups) {
-            // error handling
-            if (errorGroups) throw errorGroups;
-            // send the groups to the clouennt
-            res.status(200).send(resultsGroups);
-          }
-        );
-      } else {
-        // respond, that the user has the wrong permissions
-        res.status(200).send("Wrong permissions");
-      }
+  permission(req.query.Semester, req.query.Name, req.session.username, function(
+    perm
+  ) {
+    if (perm === "admin" || perm === "tutor" || perm === "user") {
+      sql.query(
+        /* Select groups from database */
+        "SELECT `GroupName`, `Tutor`, `Ordering`,`Starttime`, `Endtime`, `Weekday`, `Maxuser`, `Room` FROM `Groups` WHERE `CourseName` = ? AND `Semester` = ?",
+        [req.query.Name, req.query.Semester],
+        function(error, results, fields) {
+          // error handling
+          if (error) next(error);
+          // send the groups to the clouennt
+          res.status(200).send(results);
+        }
+      );
+    } else {
+      // respond, that the user has the wrong permissions
+      next(new Error("wrong permissions or course not found"));
     }
-  );
+  });
 });
 
 module.exports = router;
