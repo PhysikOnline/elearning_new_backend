@@ -35,7 +35,7 @@ CREATE TABLE `Course` (
   `GroupTimer` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`Name`, `Semester`),
   FOREIGN KEY (`Semester`) REFERENCES `Semester`(`Semester`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CHECK (
+  CONSTRAINT `constraint_GroupVisible_GroupTimerActive` CHECK (
     NOT (
       `GroupVisible`
       AND `GroupTimerActive`

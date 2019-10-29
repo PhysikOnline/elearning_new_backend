@@ -32,11 +32,12 @@ router.post("/insertorupdategroup", function(req, res, next) {
             req.query.GroupName
           ],
           function(error, results, fields) {
-            if (error) return next(errorTranslation(error));
+            if (error) return next(errorTranslation.insertOrUpdateGroup(error));
           }
         );
       } else {
-        next(new Error("wrong permissions"));
+        // respond, that the user has the wrong permissions
+        next(new Error("wrong permissions or course not found"));
       }
     }
   );
@@ -45,116 +46,81 @@ router.post("/insertorupdategroup", function(req, res, next) {
 /**
  * function to toggle the group visibility of the group assignment
  */
-router.post("/tooglegroupvisibility", function(req, res) {
-  sql.query(
-    // check permissions of the course
-    "SELECT Permissions FROM `CoursePermissions` WHERE `Semester` = ? AND `Name` = ? AND `Login` = ?",
-    [req.query.Semester, req.query.Name, req.session.username],
-    function(error, results, fields) {
-      // error handling
-      if (error) throw error;
-      // check if a user has any permissions to the course
-      if (results.length === 0) {
-        // respond with no assigned permissions
-        res.status(200).send("ERROR: No Course with Assigned User found");
-        // chekc if the user has admin permission on the course
-      } else if (results[0].Permissions === "admin") {
-        sql.query(
-          /* toggle the group visibility on th course, keep in mind, that
-          GroupTimerActive and GroupVisibility are coneccted with an NAND 
-          operator */
-          "UPDATE `Course` SET `GroupVisible` = !`GroupVisible` WHERE `Name` = ? AND `Semester` = ? AND `GroupTimerActive` = 0",
-          [req.query.Name, req.query.Semester],
-          function(errorUpdate, resultsUpdate, fieldsUpdate) {
-            // error handling
-            if (errorUpdate) throw errorUpdate;
-            /* respond that the groupVisibility got toggled if GroupTimerActive 
-            was 0 */
-            res.status(200).send("Sucsessfull If GroupTimerActive was 0");
-          }
-        );
-      } else {
-        // respond, that the user has the wrong permissions
-        res.status(200).send("Wrong permissions");
-      }
+router.post("/togglegroupvisibility", function(req, res, next) {
+  permission(req.query.Semester, req.query.Name, req.session.username, function(
+    perm
+  ) {
+    if (perm === "admin") {
+      sql.query(
+        // toggle the group visibility on th course
+        "UPDATE `Course` SET `GroupVisible` = !`GroupVisible` WHERE `Name` = ? AND `Semester` = ?",
+        [req.query.Name, req.query.Semester],
+        function(error, results, fields) {
+          // error handling
+          if (error) return next(errorTranslation.toggleGroupVisibility(error));
+          // sucsessfull change
+          res.status(200).send("sucsessfull");
+        }
+      );
+    } else {
+      // respond, that the user has the wrong permissions
+      next(new Error("wrong permissions or course not found"));
     }
-  );
+  });
 });
 
 /**
  * function to toggle the group timer active of the group assignment
  */
-router.post("/tooglegrouptimeractive", function(req, res) {
-  sql.query(
-    // check permissions of the course
-    "SELECT Permissions FROM `CoursePermissions` WHERE `Semester` = ? AND `Name` = ? AND `Login` = ?",
-    [req.query.Semester, req.query.Name, req.session.username],
-    function(error, results, fields) {
-      // error handling
-      if (error) throw error;
-      // check if a user has any permissions to the course
-      if (results.length === 0) {
-        // respond with no assigned permissions
-        res.status(200).send("ERROR: No Course with Assigned User found");
-        // chekc if the user has admin permission on the course
-      } else if (results[0].Permissions === "admin") {
-        sql.query(
-          /* toggle the group timer active on th course, keep in mind, that
-          GroupTimerActive and GroupVisibility are coneccted with an NAND 
-          operator */
-          "UPDATE `Course` SET `GroupTimerActive` = !`GroupTimerActive` WHERE `Name` = ? AND `Semester` = ? AND `GroupVisible` = 0",
-          [req.query.Name, req.query.Semester],
-          function(errorUpdate, resultsUpdate, fieldsUpdate) {
-            // error handling
-            if (errorUpdate) throw errorUpdate;
-            /* respond that the groupVisibility got toggled if GroupTimerActive 
-            was 0 */
-            res.status(200).send("Sucsessfull If GroupVisible was 0");
-          }
-        );
-      } else {
-        // respond, that the user has the wrong permissions
-        res.status(200).send("Wrong permissions");
-      }
+router.post("/togglegrouptimeractive", function(req, res, next) {
+  permission(req.query.Semester, req.query.Name, req.session.username, function(
+    perm
+  ) {
+    if (perm === "admin") {
+      sql.query(
+        // toggle the group visibility on th course
+        "UPDATE `Course` SET `GroupTimerActive` = !`GroupTimerActive` WHERE `Name` = ? AND `Semester` = ?",
+        [req.query.Name, req.query.Semester],
+        function(error, results, fields) {
+          // error handling
+          if (error)
+            return next(errorTranslation.toggleGroupTimerActive(error));
+          // sucsessfull change
+          res.status(200).send("sucsessfull");
+        }
+      );
+    } else {
+      // respond, that the user has the wrong permissions
+      next(new Error("wrong permissions or course not found"));
     }
-  );
+  });
 });
 
-router.post("/grouptimer", function(req, res) {
-  sql.query(
-    // check permissions of the course
-    "SELECT Permissions FROM `CoursePermissions` WHERE `Semester` = ? AND `Name` = ? AND `Login` = ?",
-    [req.query.Semester, req.query.Name, req.session.username],
-    function(error, results, fields) {
-      // error handling
-      if (error) throw error;
-      // check if a user has any permissions to the course
-      if (results.length === 0) {
-        // respond with no assigned permissions
-        res.status(200).send("ERROR: No Course with Assigned User found");
-        // chekc if the user has admin permission on the course
-      } else if (results[0].Permissions === "admin") {
-        sql.query(
-          /* Insert the new course time into the database */
-          "UPDATE `Course` SET `GroupTimer` = ? WHERE `Name` = ? AND `Semester` = ?",
-          [req.query.Time, req.query.Name, req.query.Semester],
-          function(errorUpdate, resultsUpdate, fieldsUpdate) {
-            // error handling
-            if (errorUpdate) throw errorUpdate;
-            /* respond that the groupVisibility got toggled if GroupTimerActive 
-            was 0 */
-            res.status(200).send("Sucsessfull If GroupVisible was 0");
-          }
-        );
-      } else {
-        // respond, that the user has the wrong permissions
-        res.status(200).send("Wrong permissions");
-      }
+router.post("/grouptimer", function(req, res, next) {
+  permission(req.query.Semester, req.query.Name, req.session.username, function(
+    perm
+  ) {
+    if (perm === "admin") {
+      sql.query(
+        /* Insert the new course time into the database */
+        "UPDATE `Course` SET `GroupTimer` = ? WHERE `Name` = ? AND `Semester` = ?",
+        [req.query.Time, req.query.Name, req.query.Semester],
+        function(error, results, fields) {
+          // error handling
+          if (error) return next(errorTranslation.groupTimer(error));
+          /* respond that the groupVisibility got toggled if GroupTimerActive 
+          was 0 */
+          res.status(200).send("sucsessfull");
+        }
+      );
+    } else {
+      // respond, that the user has the wrong permissions
+      next(new Error("wrong permissions or course not found"));
     }
-  );
+  });
 });
 
-router.get("/groupcontent", function(req, res) {
+router.get("/groupcontent", function(req, res, next) {
   sql.query(
     // check permissions of the course
     "SELECT Permissions FROM `CoursePermissions` WHERE `Semester` = ? AND `Name` = ? AND `Login` = ?",
