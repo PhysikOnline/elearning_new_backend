@@ -101,7 +101,7 @@ CREATE TABLE `Groups` (
   `Starttime` TIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `Weekday` CHAR(2) NOT NULL DEFAULT "Mo",
   `Endtime` TIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `Maxuser` INT NOT NULL DEFAULT 3,
+  `Maxuser` INT NOT NULL DEFAULT 15,
   `Room` varchar(15) NOT NULL DEFAULT "",
   PRIMARY KEY (`CourseName`, `Semester`, `GroupName`),
   FOREIGN KEY (`CourseName`, `Semester`) REFERENCES `Course`(`Name`, `Semester`) ON DELETE CASCADE ON UPDATE CASCADE,

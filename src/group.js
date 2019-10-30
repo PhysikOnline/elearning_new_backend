@@ -9,6 +9,22 @@ router.use(function(req, res, next) {
   next();
 });
 
+router.post("/joingroup", function(req, res, next) {
+  sql.query(
+    "INSERT INTO `GroupUser` (`CourseName`,`Semester`,`GroupName`,`Login`) VALUES(?,?,?,?)",
+    [
+      req.query.CourseName,
+      req.query.Semester,
+      req.query.GroupName,
+      req.session.username
+    ],
+    function(error, results, fields) {
+      if (error) return next(errorTranslation.joinGroup(error));
+      res.status(200).send("sucsessfull");
+    }
+  );
+});
+
 router.post("/insertorupdategroup", function(req, res, next) {
   permission(
     req.query.Semester,
