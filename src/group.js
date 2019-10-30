@@ -32,6 +32,7 @@ router.post("/insertorupdategroup", function(req, res, next) {
           ],
           function(error, results, fields) {
             if (error) return next(errorTranslation.insertOrUpdateGroup(error));
+            res.status(200).send("sucsessfull");
           }
         );
       } else {
