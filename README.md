@@ -69,6 +69,56 @@ req.session.username
 
 I would recommend to read the documentation of express-session.
 
+# Error handling and validation
+
+## Validation
+
+There is a Function to get the permissions of a user in a course. It is defined in `./src/courseFunctions.js`. Basic usage is:
+
+```js
+var permission = require("./courseFunctions");
+permission(
+  req.query.Semester,
+  req.query.CourseName,
+  req.session.username,
+  function(perm) {
+    if (perm === "admin") {
+      /* have fun */
+    } else {
+      // respond, that the user has the wrong permissions
+      next(new Error("wrong permissions or course not found"));
+    }
+  }
+);
+```
+
+BUT THERE IS MORE!!!
+
+Varriable validation is done by the database, which should return an error (can be mor or less easy to handle). For each api function, you **PLEASE** create a error handling script in `./apiFunctions/errorTranslation/`, there are already more than enough examples. Then you insert your error translation into `./apiFunctions/errorTranslation.js`. To use your error translation in your code, you can do:
+
+```js
+var errorTranslation = require("../apiFunctions/errorTranslation");
+
+// some code
+sql.query("blablabla", [bla, blub, quark], function(error, results, fields) {
+  if (error)
+    return next(
+      errorTranslation.theErrorFunctionThatYouWroteOutOfFreeWill(error)
+    );
+});
+// other code
+```
+
+## Error Handling
+
+If you want to throw an error in your function to notify the api user, you can to
+
+```js
+router.whatever("/pathsAreForNoobs", function(req, res, next) {
+  return next(new Error("Your error!"));
+});
+```
+
 # API Documentation:
 
 ## /user
