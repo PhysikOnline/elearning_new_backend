@@ -6,6 +6,10 @@ DROP TRIGGER IF EXISTS isGroupFullInsertValidation;
 
 DROP TRIGGER IF EXISTS isGroupFullUpdateValidation;
 
+DROP TRIGGER IF EXISTS isCourseUserUpdateValidation;
+
+DROP TRIGGER IF EXISTS isCourseUserInsertValidation;
+
 DROP TABLE IF EXISTS `GroupUser`;
 
 DROP TABLE IF EXISTS `CoursePermissions`;
@@ -55,12 +59,38 @@ CREATE TABLE `CoursePermissions` (
   `Name` varchar(60) NOT NULL,
   `Semester` varchar(10) NOT NULL,
   `Login` char(8) NOT NULL,
-  `Permissions` varchar(6),
+  `Permissions` varchar(6) NOT NULL,
   PRIMARY KEY (`Name`, `Semester`, `Login`),
   FOREIGN KEY (`Name`, `Semester`) REFERENCES `Course`(`Name`, `Semester`) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (`Login`) REFERENCES `User`(`Login`) ON DELETE CASCADE ON UPDATE CASCADE,
   CHECK (`Permissions` IN ('user', 'admin'))
 );
+
+CREATE TRIGGER isCourseUserUpdateValidation BEFORE
+UPDATE
+  ON `CoursePermissions` FOR EACH ROW BEGIN IF NOT (
+    (
+      SELECT
+        CASE
+          WHEN 1 = (
+            SELECT
+              COUNT(*)
+            FROM
+              `GroupUser`
+            WHERE
+              `CourseName` = NEW.Name
+              AND `Semester` = NEW.Semester
+              AND `Login` = NEW.Login
+          ) THEN NEW.Permissions = 'user'
+        END
+    )
+  ) THEN SIGNAL SQLSTATE '45000'
+SET
+  MESSAGE_TEXT = 'only users can be in Groups';
+
+END IF;
+
+END;
 
 CREATE TABLE `Groups` (
   `CourseName` varchar(60) NOT NULL,
@@ -138,30 +168,32 @@ CREATE TABLE `GroupUser` (
   `GroupName` varchar(20) NOT NULL,
   `Login` char(8) NOT NULL,
   PRIMARY KEY (`CourseName`, `Semester`, `Login`),
-  FOREIGN KEY (`Login`) REFERENCES `User`(`Login`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`Login`) REFERENCES `CoursePermissions`(`Login`) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (`CourseName`, `Semester`, `GroupName`) REFERENCES `Groups`(`CourseName`, `Semester`, `GroupName`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TRIGGER isGroupFullInsertValidation BEFORE
 INSERT
   ON `GroupUser` FOR EACH ROW BEGIN IF (
-    SELECT
-      `MaxUser`
-    FROM
-      `Groups`
-    WHERE
-      `CourseName` = NEW.CourseName
-      AND `Semester` = NEW.Semester
-      AND `GroupName` = NEW.GroupName
-  ) <= (
-    SELECT
-      count(`Login`)
-    FROM
-      `GroupUser`
-    WHERE
-      `CourseName` = NEW.CourseName
-      AND `Semester` = NEW.Semester
-      AND `GroupName` = NEW.GroupName
+    (
+      SELECT
+        `MaxUser`
+      FROM
+        `Groups`
+      WHERE
+        `CourseName` = NEW.CourseName
+        AND `Semester` = NEW.Semester
+        AND `GroupName` = NEW.GroupName
+    ) <= (
+      SELECT
+        count(`Login`)
+      FROM
+        `GroupUser`
+      WHERE
+        `CourseName` = NEW.CourseName
+        AND `Semester` = NEW.Semester
+        AND `GroupName` = NEW.GroupName
+    )
   ) THEN SIGNAL SQLSTATE '45000'
 SET
   MESSAGE_TEXT = 'Group is Full';
@@ -193,6 +225,27 @@ UPDATE
   ) THEN SIGNAL SQLSTATE '45000'
 SET
   MESSAGE_TEXT = 'Group is full';
+
+END IF;
+
+END;
+
+CREATE TRIGGER isCourseUserInsertValidation BEFORE
+INSERT
+  ON `GroupUser` FOR EACH ROW BEGIN IF NOT (
+    (
+      SELECT
+        `Permissions`
+      FROM
+        `CoursePermissions`
+      WHERE
+        `Name` = NEW.CourseName
+        AND `Semester` = NEW.Semester
+        AND `Login` = NEW.Login
+    ) = "user"
+  ) THEN SIGNAL SQLSTATE '45000'
+SET
+  MESSAGE_TEXT = 'only users can be in Groups';
 
 END IF;
 

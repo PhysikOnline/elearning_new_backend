@@ -112,6 +112,24 @@ VALUES
         "WiSe 19/20",
         "s0000000",
         "admin"
+    ),
+    (
+        "Grundlagen in Mobbing 2",
+        "WiSe 19/20",
+        "s0000003",
+        "user"
+    ),
+    (
+        "Grundlagen in Mobbing 2",
+        "WiSe 19/20",
+        "s0000004",
+        "user"
+    ),
+    (
+        "Grundlagen in Mobbing 2",
+        "WiSe 19/20",
+        "s0000005",
+        "user"
     );
 
 INSERT INTO
