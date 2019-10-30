@@ -1,3 +1,11 @@
+DROP TRIGGER IF EXISTS GroupsisGroupFullInsertValidation;
+
+DROP TRIGGER IF EXISTS GroupsisGroupFullUpdateValidation;
+
+DROP TRIGGER IF EXISTS isGroupFullInsertValidation;
+
+DROP TRIGGER IF EXISTS isGroupFullUpdateValidation;
+
 DROP TABLE IF EXISTS `GroupUser`;
 
 DROP TABLE IF EXISTS `CoursePermissions`;
@@ -63,7 +71,7 @@ CREATE TABLE `Groups` (
   `Starttime` TIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `Weekday` CHAR(2) NOT NULL DEFAULT "Mo",
   `Endtime` TIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `Maxuser` INT NOT NULL DEFAULT 15,
+  `Maxuser` INT NOT NULL DEFAULT 3,
   `Room` varchar(15) NOT NULL DEFAULT "",
   PRIMARY KEY (`CourseName`, `Semester`, `GroupName`),
   FOREIGN KEY (`CourseName`, `Semester`) REFERENCES `Course`(`Name`, `Semester`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -83,10 +91,46 @@ CREATE TABLE `Groups` (
     ),
     CONSTRAINT `constraint_Weekday` CHECK(
       `Weekday` IN ("Mo", "Di", "Mi", "Do", "Fr")
-    ),
-    -- Implement user constraint
-    CHECK(`Maxuser` > 0)
+    )
 );
+
+CREATE TRIGGER GroupsisGroupFullInsertValidation BEFORE
+INSERT
+  ON `Groups` FOR EACH ROW BEGIN IF (NEW.MaxUser) < (
+    SELECT
+      count(`Login`)
+    FROM
+      `GroupUser`
+    WHERE
+      `CourseName` = NEW.CourseName
+      AND `Semester` = NEW.Semester
+      AND `GroupName` = NEW.GroupName
+  ) THEN SIGNAL SQLSTATE '45000'
+SET
+  MESSAGE_TEXT = 'Group can not be decreased';
+
+END IF;
+
+END;
+
+CREATE TRIGGER GroupsisGroupFullUpdateValidation BEFORE
+UPDATE
+  ON `Groups` FOR EACH ROW BEGIN IF (NEW.MaxUser) < (
+    SELECT
+      count(`Login`)
+    FROM
+      `GroupUser`
+    WHERE
+      `CourseName` = NEW.CourseName
+      AND `Semester` = NEW.Semester
+      AND `GroupName` = NEW.GroupName
+  ) THEN SIGNAL SQLSTATE '45000'
+SET
+  MESSAGE_TEXT = 'Group can not be decreased';
+
+END IF;
+
+END;
 
 CREATE TABLE `GroupUser` (
   `CourseName` varchar(60) NOT NULL,
@@ -97,3 +141,59 @@ CREATE TABLE `GroupUser` (
   FOREIGN KEY (`Login`) REFERENCES `User`(`Login`) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (`CourseName`, `Semester`, `GroupName`) REFERENCES `Groups`(`CourseName`, `Semester`, `GroupName`) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TRIGGER isGroupFullInsertValidation BEFORE
+INSERT
+  ON `GroupUser` FOR EACH ROW BEGIN IF (
+    SELECT
+      `MaxUser`
+    FROM
+      `Groups`
+    WHERE
+      `CourseName` = NEW.CourseName
+      AND `Semester` = NEW.Semester
+      AND `GroupName` = NEW.GroupName
+  ) <= (
+    SELECT
+      count(`Login`)
+    FROM
+      `GroupUser`
+    WHERE
+      `CourseName` = NEW.CourseName
+      AND `Semester` = NEW.Semester
+      AND `GroupName` = NEW.GroupName
+  ) THEN SIGNAL SQLSTATE '45000'
+SET
+  MESSAGE_TEXT = 'Group is Full';
+
+END IF;
+
+END;
+
+CREATE TRIGGER isGroupFullUpdateValidation BEFORE
+UPDATE
+  ON `GroupUser` FOR EACH ROW BEGIN IF (
+    SELECT
+      `MaxUser`
+    FROM
+      `Groups`
+    WHERE
+      `CourseName` = NEW.CourseName
+      AND `Semester` = NEW.Semester
+      AND `GroupName` = NEW.GroupName
+  ) <= (
+    SELECT
+      count(`Login`)
+    FROM
+      `GroupUser`
+    WHERE
+      `CourseName` = NEW.CourseName
+      AND `Semester` = NEW.Semester
+      AND `GroupName` = NEW.GroupName
+  ) THEN SIGNAL SQLSTATE '45000'
+SET
+  MESSAGE_TEXT = 'Group is full';
+
+END IF;
+
+END;
