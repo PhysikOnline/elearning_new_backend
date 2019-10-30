@@ -19,6 +19,10 @@ function insertOrUpdateGroup(error) {
     error.MS = ERROR.WeekdayError[error.code];
     return error;
   }
+  if (error.message.includes("ER_SIGNAL_EXCEPTION")) {
+    error.MS = ERROR.MaxUser[error.code];
+    return error;
+  }
 }
 
 const ERROR = {
@@ -64,6 +68,11 @@ const ERROR = {
     },
     ER_NO_REFERENCED_ROW_2: {
       Tutor: "does not exist"
+    }
+  },
+  MaxUser: {
+    ER_SIGNAL_EXCEPTION: {
+      MaxUser: "cannot be decreased"
     }
   }
 };
