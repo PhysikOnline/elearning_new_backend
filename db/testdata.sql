@@ -3,7 +3,13 @@ INSERT INTO
 VALUES
     ("s0000000", PASSWORD("s0000000")),
     ("s0000001", PASSWORD("s0000001")),
-    ("s0000002", PASSWORD("s0000002"));
+    ("s0000002", PASSWORD("s0000002")),
+    ("s0000003", PASSWORD("s0000003")),
+    ("s0000004", PASSWORD("s0000004")),
+    ("s0000005", PASSWORD("s0000005")),
+    ("s0000006", PASSWORD("s0000006")),
+    ("s0000007", PASSWORD("s0000007")),
+    ("s0000008", PASSWORD("s0000008"));
 
 INSERT INTO
     `Semester` (`Semester`, `Ordering`)
@@ -120,23 +126,56 @@ VALUES
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
         "Gruppe 1",
-        "s0000002"
+        "s0000001"
     ),
     (
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
         "Gruppe 2",
-        "s0000002"
+        "s0000001"
     ),
     (
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
         "Gruppe 3",
-        "s0000002"
+        "s0000001"
     ),
     (
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
         "Gruppe 4",
-        "s0000002"
+        "s0000001"
+    );
+
+INSERT INTO
+    `GroupUser` (
+        `CourseName`,
+        `Semester`,
+        `GroupName`,
+        `Login`
     )
+VALUES
+    (
+        "Grundlagen in Mobbing 2",
+        "WiSe 19/20",
+        "Gruppe 1",
+        "s0000002"
+    ),
+    (
+        "Grundlagen in Mobbing 2",
+        "WiSe 19/20",
+        "Gruppe 1",
+        "s0000003"
+    ),
+    (
+        "Grundlagen in Mobbing 2",
+        "WiSe 19/20",
+        "Gruppe 1",
+        "s0000004"
+    ),
+    (
+        "Grundlagen in Mobbing 2",
+        "WiSe 19/20",
+        "Gruppe 3",
+        "s0000005"
+    );
