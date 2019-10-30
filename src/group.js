@@ -25,6 +25,25 @@ router.post("/joingroup", function(req, res, next) {
   );
 });
 
+router.post("/leavegroup", function(req, res, next) {
+  sql.query(
+    "DELETE FROM `GroupUser` WHERE `CourseName` = ? AND `Semester` = ? AND `GroupName` = ? AND `Login` = ?;",
+    [
+      req.query.CourseName,
+      req.query.Semester,
+      req.query.GroupName,
+      req.session.username
+    ],
+    function(error, results, fields) {
+      if (error) return next(errorTranslation.leaveGroup(error));
+      if (results.affectedRows === 0) {
+        return next(new Error("No user in the Group"));
+      }
+      res.status(200).send("sucsessfull");
+    }
+  );
+});
+
 router.post("/insertorupdategroup", function(req, res, next) {
   permission(
     req.query.Semester,

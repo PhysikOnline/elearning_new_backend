@@ -130,6 +130,12 @@ VALUES
         "WiSe 19/20",
         "s0000005",
         "user"
+    ),
+    (
+        "Grundlagen in Mobbing 2",
+        "WiSe 19/20",
+        "s0000008",
+        "user"
     );
 
 INSERT INTO
