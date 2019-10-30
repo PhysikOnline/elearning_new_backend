@@ -1,4 +1,8 @@
 function insertOrUpdateGroup(error) {
+  if (error.message.includes("ER_DUP_ENTRY")) {
+    error.MS = ERROR.GroupNameError[error.code];
+    return error;
+  }
   if (error.message.includes("GroupName")) {
     error.MS = ERROR.GroupNameError[error.code];
     return error;
@@ -20,7 +24,7 @@ function insertOrUpdateGroup(error) {
     return error;
   }
   if (error.message.includes("ER_SIGNAL_EXCEPTION")) {
-    error.MS = ERROR.MaxUser[error.code];
+    error.MS = ERROR.MaxUserError[error.code];
     return error;
   }
   return error;
@@ -55,6 +59,9 @@ const ERROR = {
   },
 
   GroupNameError: {
+    ER_DUP_ENTRY: {
+      GroupName: "already exists"
+    },
     ER_BAD_NULL_ERROR: {
       GroupName: "must be defined"
     },
@@ -71,7 +78,7 @@ const ERROR = {
       Tutor: "does not exist"
     }
   },
-  MaxUser: {
+  MaxUserError: {
     ER_SIGNAL_EXCEPTION: {
       MaxUser: "cannot be decreased"
     }
