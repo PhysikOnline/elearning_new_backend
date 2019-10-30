@@ -3,6 +3,7 @@ function toogleGroupVisibility(error) {
     error.MS = ERROR.GroupVisible[error.code];
     return error;
   }
+  return error;
 }
 
 const ERROR = {

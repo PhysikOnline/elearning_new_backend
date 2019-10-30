@@ -3,6 +3,7 @@ function groupTimer(error) {
     error.MS = ERROR.GroupTimer[error.code];
     return error;
   }
+  return error;
 }
 
 const ERROR = {

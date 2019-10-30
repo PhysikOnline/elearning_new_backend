@@ -23,6 +23,7 @@ function insertOrUpdateGroup(error) {
     error.MS = ERROR.MaxUser[error.code];
     return error;
   }
+  return error;
 }
 
 const ERROR = {

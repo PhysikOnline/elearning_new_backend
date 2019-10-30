@@ -3,6 +3,7 @@ function toggleGroupTimerActive(error) {
     error.MS = ERROR.GroupTimerActive[error.code];
     return error;
   }
+  return error;
 }
 
 const ERROR = {
