@@ -1,3 +1,4 @@
+// insert all errorTranslation functions into this object here
 errorTranslation = {
   insertOrUpdateGroup: require("./errorTranslation/insertOrUpdateGroup"),
   toggleGroupVisibility: require("./errorTranslation/toggleGroupVisibility"),

@@ -31,8 +31,8 @@ router.post("/login", function(req, res) {
         if (results.length === 1) {
           // assign username to session
           req.session.username = req.query.username;
-          // respond with a sucsessfull login
-          res.status(200).send("Login sucsessfull");
+          // respond with a successfull login
+          res.status(200).send("Login successfull");
         } else {
           // if the result.lenght is not 1, then the credentials are fals.
           res.status(200).send("ERROR: Incorrect credentials");
@@ -56,7 +56,7 @@ router.post("/logout", function(req, res) {
       // error handling
       if (error) throw error;
       // respond with a secsessfull logout
-      res.status(200).send("Sucsessfully logged out");
+      res.status(200).send("successfully logged out");
     });
   }
 });

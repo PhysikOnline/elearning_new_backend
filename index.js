@@ -50,7 +50,7 @@ app.use(
 app.use("/user", user);
 app.use("/course", course);
 
-// errorHandling
+// errorHandling Middleware
 app.use(errorHandling);
 
 // start the app

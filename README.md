@@ -53,7 +53,7 @@ Before starting the project, you need to install all needed packages:
 npm install
 ```
 
-After a sucsessfull install (Some package installs result in some warnings, but these can be connected, that you are not using a Mac) do:
+After a successfull install (Some package installs result in some warnings, but these can be connected, that you are not using a Mac) do:
 
 ```
 npm run start
@@ -134,7 +134,7 @@ router.whatever("/pathsAreForNoobs", function(req, res, next) {
 | ----------------------------- | --------------------------------------------------------------------------------------------------- |
 | ERROR: User already logged in | there is a user already logged in please log out before, or delete the session coockie              |
 | ERROR: Incorrect credentials  | the username or the passowrd provided, do not match the username or password stored in the database |
-| Login sucsessfull             | sucsesfully logged in, the username will be assiciated with the current session cockie              |
+| Login successfull             | sucsesfully logged in, the username will be assiciated with the current session cockie              |
 
 ### POST /user/logout
 
@@ -144,7 +144,7 @@ router.whatever("/pathsAreForNoobs", function(req, res, next) {
 
 | Response                 | Describtion                          |
 | ------------------------ | ------------------------------------ |
-| Sucsessfully logged out  | the session was sucsessfully removed |
+| successfully logged out  | the session was successfully removed |
 | ERROR: No User logged in | user not logged in, please log in    |
 
 ### GET /user/checklogin
@@ -232,6 +232,155 @@ courseVarriable.auth.inculudes("admin");
 | ----------------------------------------- | ------------------------------------------------------------------------------- |
 | ERROR: No Course with Assigned User found | The user has no permissions on the used course (not even the "user" permission) |
 | Wrong permissions                         | The user has not the "admin" permission                                         |
-| Sucsessfull                               | The description was sucsessfully changed                                        |
+| successfull                               | The description was successfully changed                                        |
+
+### POST /course/group/joingroup
+
+| Attribute  | Type   | Required | Describtion               |
+| ---------- | ------ | -------- | ------------------------- |
+| Semester   | String | yes      | Semester of the course    |
+| CourseName | string | yes      | Module name of the course |
+| GroupName  | String | yes      | Group Name of the Course  |
+
+| Response                                                   | Describtion                                    |
+| ---------------------------------------------------------- | ---------------------------------------------- |
+| `{error: { User: "already in Group" }}`                    | User is already in a group                     |
+| `{error: { Group: "is Full" }}`                            | The group you want to join is full             |
+| `{error: { Group: "can just be joined by course users" }}` | The logged in user is not a user of the course |
+| `{error: { Group: "not found" }}`                          | No group was found in the course               |
+| `{error: { CourseName: "is too long" }}`                   | The CourseName is too Long                     |
+| `{error: { CourseName: "cannot be null" }}`                | The CourseName cannot be null                  |
+| `{error: { Semester: "is too long" }}`                     | The Semester is too Long                       |
+| `{error: { Semester: "cannot be null" }}`                  | The Semester cannot be null                    |
+| `{error: { GroupName: "is too long" }}`                    | The GroupName is too Long                      |
+| `{error: { GroupName: "cannot be null" }}`                 | The GroupName cannot be null                   |
+| `{error: { User: "not logged in" }}`                       | There is no user logged in                     |
+| successfull                                                | succsessfully joined the group                 |
+
+### POST /course/group/leavegroup
+
+| Attribute  | Type   | Required | Describtion               |
+| ---------- | ------ | -------- | ------------------------- |
+| Semester   | String | no       | Semester of the course    |
+| CourseName | string | no       | Module name of the course |
+| GroupName  | String | no       | Group Name of the Course  |
+
+| Response                                                           | Describtion                                                  |
+| ------------------------------------------------------------------ | ------------------------------------------------------------ |
+| `{error: "User not in group or group not found or not logged in"}` | There is no User within such a Group or no user is logged in |
+| successfull                                                        | succsessfully left the group                                 |
+
+### POST /course/group/insertorupdategroup
+
+            req.query.Room
+
+| Attribute    | Type                                                         | Required                           | Describtion                                                                            |
+| ------------ | ------------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------------------------------------- |
+| Semester     | String                                                       | yes                                | Semester of the course                                                                 |
+| CourseName   | string                                                       | yes                                | Module name of the course                                                              |
+| GroupName    | String                                                       | yes                                | new Group Name of the Course (make it the same as OldGroupName to update the Group)    |
+| OldGroupName | String                                                       | yes                                | Group Name of the Course (this will be the group name, if OldGroupName does not exist) |
+| Tutor        | String                                                       | no (Defaults to NULL)              | Tutor of the Group                                                                     |
+| Starttime    | String (HH:MM:SS 24h format)                                 | no (Defaults to CURRENT_TIMESTAMP) | Starttime of the Tutorial                                                              |
+| Endtime      | String (HH:MM:SS 24h format)                                 | no (Defaults to CURRENT_TIMESTAMP) | Endtime of the Tutorial                                                                |
+| Weekday      | String of ("Mo", "Di", "Mi", "Do", "Fr")                     | no (Defaults to "Mo")              | The weekday of the Tutorial                                                            |
+| MaxUser      | INT (Must be larer than the assigned users in the Group)     | no (Defaults to 15)                | Maximum number of user who can join the group                                          |
+| Room         | String (can be literally anything of 15 char or less lenght) | no (Defaults to "")                | Room of the Group                                                                      |
+
+| Response                                                        | Describtion                                                          |
+| --------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `{error: { Weekday: "is too long"}}`                            | Weekday is too Long                                                  |
+| `{error: { Weekday: 'has to be "Mo", "Di", "Mi", "Do", "Fr"'}}` | Weekday is not one of the allowed values                             |
+| `{error: { Endtime: "wrong value"}}`                            | Endtime has a wrong format                                           |
+| `{error: { Endtime: "out of boundaries"}}`                      | Endtime is not in the 24 h format                                    |
+| `{error: { Starttime: "wrong value"}}`                          | Starttime has a wrong format                                         |
+| `{error: { Starttime: "out of boundaries"}}`                    | Starttime is not in the 24 h format                                  |
+| `{error: { GroupName: "already exists"}}`                       | GroupName you want to insert or update to already exists             |
+| `{error: { GroupName: "must be defined"}}`                      | GroupName cannot be NULL                                             |
+| `{error: { GroupName: "has wrong format"}}`                     | GroupName is not REGEX `"^[ÄÖÜäöüßA-Za-z0-9 ]{3,20}$"`               |
+| `{error: { GroupName: "is too long"}}`                          | GroupName is too Long                                                |
+| `{error: { Tutor: "login is too long"}}`                        | Tutor is too long                                                    |
+| `{error: { Tutor: "does not exist"}}`                           | Tutor user does not exist                                            |
+| `{error: { MaxUser: "cannot be decreased"}}`                    | MaxUser cannot be decreased because other users may be in that group |
+| `{error: "wrong permissions or course not found"}`              | The user has not the Admin permission on that course                 |
+| successfull                                                     | Group seccsessfully updated or inserted                              |
+
+### POST /course/group/togglegroupvisibility
+
+| Attribute | Type   | Required | Describtion            |
+| --------- | ------ | -------- | ---------------------- |
+| Semester  | String | yes      | Semester of the course |
+| Name      | string | yes      | Name of the course     |
+
+| Response                                                                    | Describtion                                                                |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `{error: {GroupVisible: "did not changed because GroupTimerActive was 1"}}` | GroupTimerActive is 1, either GroupVisibility or GroupTimerActive can be 1 |
+| `{error: "wrong permissions or course not found"}`                          | The user has not the Admin permission on that course                       |
+| successfull                                                                 | succsessfully toggled groupVisibility                                      |
+
+### POST /course/group/togglegrouptimeractive
+
+| Attribute | Type   | Required | Describtion            |
+| --------- | ------ | -------- | ---------------------- |
+| Semester  | String | yes      | Semester of the course |
+| Name      | string | yes      | Name of the course     |
+
+| Response                                                                       | Describtion                                                               |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `{error: {GroupTimerActive: "did not changed because GroupVisibility was 1"}}` | GroupVisibility is 1, either GroupVisibility or GroupTimerActive can be 1 |
+| `{error: "wrong permissions or course not found"}`                             | The user has not the Admin permission on that course                      |
+| successfull                                                                    | succsessfully toggled groupTimerActive                                    |
+
+### POST /course/group/grouptimer
+
+| Attribute | Type                           | Required                           | Describtion                           |
+| --------- | ------------------------------ | ---------------------------------- | ------------------------------------- |
+| Semester  | String                         | yes                                | Semester of the course                |
+| Name      | string                         | yes                                | Name of the course                    |
+| Time      | string (MYSQL Datetime format) | no (Defaults to CURRENT_TIMESTAMP) | time where the group assigment starts |
+
+| Response                                           | Describtion                                            |
+| -------------------------------------------------- | ------------------------------------------------------ |
+| `{error: {GroupTimer: "has wrong date format"}}`   | GroupTimer does not fullfill the MYSQL DATETIME format |
+| `{error: "wrong permissions or course not found"}` | The user has not the Admin permission on that course   |
+| successfull                                        | succsessfully toggled groupTimerActive                 |
+
+### POST /course/group/groupcontent
+
+| Attribute | Type   | Required | Describtion            |
+| --------- | ------ | -------- | ---------------------- |
+| Semester  | String | yes      | Semester of the course |
+| Name      | string | yes      | Name of the course     |
+
+| Response    | Describtion                            |
+| ----------- | -------------------------------------- |
+| successfull | succsessfully toggled groupTimerActive |
+
+An example response can be
+
+```JSON
+[
+    {
+        "GroupName": "Gruppe 1",
+        "Tutor": "s0000002",
+        "Ordering": 1,
+        "Starttime": "15:27:07",
+        "Endtime": "15:27:07",
+        "Weekday": "Mo",
+        "Maxuser": 15,
+        "Room": ""
+    },
+    {
+        "GroupName": "Gruppe 2",
+        "Tutor": "s0000002",
+        "Ordering": 2,
+        "Starttime": "15:27:07",
+        "Endtime": "15:27:07",
+        "Weekday": "Mo",
+        "Maxuser": 15,
+        "Room": ""
+    }
+]
+```
 
 # Todo

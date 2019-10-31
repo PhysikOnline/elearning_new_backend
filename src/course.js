@@ -34,7 +34,7 @@ router.post("/insertdescription", function(req, res) {
             // error handling
             if (errorUpdate) throw errorUpdate;
             // respond with a sucsessful description change
-            res.status(200).send("Sucsessfull");
+            res.status(200).send("successfull");
           }
         );
       } else {

@@ -9,8 +9,12 @@ router.use(function(req, res, next) {
   next();
 });
 
+/**
+ * function for joining a group in a group assignment
+ */
 router.post("/joingroup", function(req, res, next) {
   sql.query(
+    // insert user into group
     "INSERT INTO `GroupUser` (`CourseName`,`Semester`,`GroupName`,`Login`) VALUES(?,?,?,?)",
     [
       req.query.CourseName,
@@ -19,14 +23,20 @@ router.post("/joingroup", function(req, res, next) {
       req.session.username
     ],
     function(error, results, fields) {
+      // error handling for insert errors
       if (error) return next(errorTranslation.joinGroup(error));
-      res.status(200).send("sucsessfull");
+      // respond with successfull insert
+      res.status(200).send("successfull");
     }
   );
 });
 
+/**
+ * function for joining a group in a group assignment
+ */
 router.post("/leavegroup", function(req, res, next) {
   sql.query(
+    // delete user from group
     "DELETE FROM `GroupUser` WHERE `CourseName` = ? AND `Semester` = ? AND `GroupName` = ? AND `Login` = ?;",
     [
       req.query.CourseName,
@@ -35,23 +45,35 @@ router.post("/leavegroup", function(req, res, next) {
       req.session.username
     ],
     function(error, results, fields) {
+      // error handling for group leaving
       if (error) return next(errorTranslation.leaveGroup(error));
+      // check if a row was deleted
       if (results.affectedRows === 0) {
-        return next(new Error("No user in the Group"));
+        // respond with no user in group
+        return next(
+          new Error("User not in group or group not found or not logged in")
+        );
       }
-      res.status(200).send("sucsessfull");
+      // respond with successfull deletion
+      res.status(200).send("successfull");
     }
   );
 });
 
+/**
+ * function for inserting or updating a group
+ */
 router.post("/insertorupdategroup", function(req, res, next) {
+  // check for user permissions in course
   permission(
     req.query.Semester,
     req.query.CourseName,
     req.session.username,
     function(perm) {
+      // check user permission
       if (perm === "admin") {
         sql.query(
+          // insert or update group
           "INSERT INTO `Groups` (`CourseName`, `Semester`, `GroupName`, `Tutor`, `Starttime`, `Weekday`, `Endtime`, `Maxuser`, `Room`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `GroupName` = ?, `Tutor` = VALUES(`Tutor`), `Starttime` = VALUES(`Starttime`), `Weekday` = VALUES(`Weekday`), `Endtime` = VALUES(`Endtime`), `Maxuser` = VALUES(`Maxuser`), `Room` = VALUES(`Room`)",
           [
             req.query.CourseName,
@@ -66,8 +88,10 @@ router.post("/insertorupdategroup", function(req, res, next) {
             req.query.GroupName
           ],
           function(error, results, fields) {
+            // error handling for insert/update
             if (error) return next(errorTranslation.insertOrUpdateGroup(error));
-            res.status(200).send("sucsessfull");
+            // respond with succsessfull login
+            res.status(200).send("successfull");
           }
         );
       } else {
@@ -93,8 +117,8 @@ router.post("/togglegroupvisibility", function(req, res, next) {
         function(error, results, fields) {
           // error handling
           if (error) return next(errorTranslation.toggleGroupVisibility(error));
-          // sucsessfull change
-          res.status(200).send("sucsessfull");
+          // successfull change
+          res.status(200).send("successfull");
         }
       );
     } else {
@@ -120,8 +144,8 @@ router.post("/togglegrouptimeractive", function(req, res, next) {
           // error handling
           if (error)
             return next(errorTranslation.toggleGroupTimerActive(error));
-          // sucsessfull change
-          res.status(200).send("sucsessfull");
+          // successfull change
+          res.status(200).send("successfull");
         }
       );
     } else {
@@ -145,7 +169,7 @@ router.post("/grouptimer", function(req, res, next) {
           if (error) return next(errorTranslation.groupTimer(error));
           /* respond that the groupVisibility got toggled if GroupTimerActive 
           was 0 */
-          res.status(200).send("sucsessfull");
+          res.status(200).send("successfull");
         }
       );
     } else {
