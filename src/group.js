@@ -25,6 +25,7 @@ router.post("/joingroup", function(req, res, next) {
     function(error, results, fields) {
       // error handling for insert errors
       if (error) return next(errorTranslation.joinGroup(error));
+
       // respond with successfull insert
       res.status(200).send("successfull");
     }
@@ -32,7 +33,7 @@ router.post("/joingroup", function(req, res, next) {
 });
 
 /**
- * function for joining a group in a group assignment
+ * function for leaving a group in a group assignment
  */
 router.post("/leavegroup", function(req, res, next) {
   sql.query(
