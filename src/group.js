@@ -187,8 +187,16 @@ router.get("/groupcontent", function(req, res, next) {
     if (perm === "admin" || perm === "tutor" || perm === "user") {
       sql.query(
         /* Select groups from database */
-        "SELECT `GroupName`, `Tutor`, `Ordering`,`Starttime`, `Endtime`, `Weekday`, `Maxuser`, `Room` FROM `Groups` WHERE `CourseName` = ? AND `Semester` = ?",
-        [req.query.Name, req.query.Semester],
+        "SELECT G.`GroupName`, G.`Tutor`, G.`Ordering`,G.`Starttime`, G.`Endtime`, \
+        G.`Weekday`, G.`Maxuser`, G.`Room`, (SELECT Count(*) FROM GroupUser AS U \
+        WHERE U.`CourseName` = ? AND U.`Semester` = ? AND U.`GroupName` = G.`GroupName`) \
+        AS AssignedUser FROM `Groups` AS G WHERE G.`CourseName` = ? AND G.`Semester` = ?",
+        [
+          req.query.Name,
+          req.query.Semester,
+          req.query.Name,
+          req.query.Semester
+        ],
         function(error, results, fields) {
           // error handling
           if (error) next(error);
