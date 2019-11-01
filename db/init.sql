@@ -22,8 +22,7 @@ DROP TABLE IF EXISTS `Semester`;
 
 DROP TABLE IF EXISTS `User`;
 
-DROP TABLE IF EXISTS `Sessions`;
-
+-- DROP TABLE IF EXISTS `Sessions`;
 CREATE TABLE `User` (
   `Login` char(8) NOT NULL,
   `password` char(41) NULL,
