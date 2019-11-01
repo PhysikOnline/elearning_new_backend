@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 var sql = require("../db/db");
 
+var permission = require("./courseFunctions");
+
 var group = require("./group");
 
 // middleware that is specific to this router
@@ -67,38 +69,32 @@ router.get("/coursecontent", function(req, res) {
       } else {
         // store the results in an extra varriable
         let course = results[0];
+        // initialize with no permissions
+        course.auth = [];
         /* fetch the user permissions, this is to handle the content in the 
         frontend */
-        sql.query(
-          // fetch the user permissions
-          "SELECT `Permissions` FROM `CoursePermissions` WHERE `Semester` = ? AND `Name` = ? AND `Login` = ?",
-          [req.query.Semester, req.query.Name, req.session.username],
-          function(errorPermissions, resultsPermissions, fieldsPermissions) {
-            // error handling
-            if (errorPermissions) throw errorPermissions;
-            // check if the user has any permissions in the course
-            if (resultsPermissions.length === 0) {
-              // attach, an empty array to the response, wich means no permissions
-              course.auth = [];
-              // response with the course content
-              res.status(200).send(course);
-            } else {
-              // conditions to check for attaching the inherited permissions
-              switch (resultsPermissions[0].Permissions) {
-                case "admin":
-                  // add user permissions to the admin
-                  course.auth = ["user", "admin"];
-                  break;
-                case "user":
-                  // keep user permissions
-                  course.auth = ["user"];
-                  break;
-                default:
-                  break;
-              }
-              // response with the user and the permissions
-              res.status(200).send(course);
+        permission(
+          req.query.Semester,
+          req.query.Name,
+          req.session.username,
+          function(perm) {
+            switch (perm) {
+              case "admin":
+                // add user permissions to the admin
+                course.auth = ["user", "tutor", "admin"];
+                break;
+              case "tutor":
+                // add user permissions to the tutor
+                course.auth = ["user", "tutor"];
+                break;
+              case "user":
+                // keep user permissions
+                course.auth = ["user"];
+                break;
+              default:
+                break;
             }
+            res.status(200).send(course);
           }
         );
       }
