@@ -12,6 +12,34 @@ router.use(function(req, res, next) {
 /**
  * function for deleting a group in a group assignment
  */
+router.get("/assignedgroup", function(req, res, next) {
+  // check for user permissions in course
+  sql.query(
+    // insert user into group
+    "SELECT GroupName FROM (SELECT `GroupName`, `Tutor` AS Login FROM `Groups` \
+    WHERE `CourseName` = ? AND `Semester` = ? \
+    UNION ALL SELECT `GroupName`, `Login` FROM `GroupUser` WHERE \
+    `CourseName` = ? AND `Semester` = ?) a \
+    WHERE `Login` = ?",
+    [
+      req.query.CourseName,
+      req.query.Semester,
+      req.query.CourseName,
+      req.query.Semester,
+      req.session.username
+    ],
+    function(error, results, fields) {
+      // error handling for select errors
+      if (error) return next(errorTranslation.assignedGroups(error));
+      // respond with assigned groups
+      res.status(200).send(results.map(x => x.GroupName));
+    }
+  );
+});
+
+/**
+ * function for deleting a group in a group assignment
+ */
 router.post("/deletegroup", function(req, res, next) {
   // check for user permissions in course
   permission(
