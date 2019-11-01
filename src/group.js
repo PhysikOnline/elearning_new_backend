@@ -10,6 +10,41 @@ router.use(function(req, res, next) {
 });
 
 /**
+ * function for deleting a group in a group assignment
+ */
+router.post("/deletegroup", function(req, res, next) {
+  // check for user permissions in course
+  permission(
+    req.query.Semester,
+    req.query.CourseName,
+    req.session.username,
+    function(perm) {
+      if (perm === "admin") {
+        sql.query(
+          // delete group
+          "DELETE FROM `Groups` WHERE `CourseName` = ? AND `Semester` = ? AND `GroupName` = ?",
+          [req.query.CourseName, req.query.Semester, req.query.GroupName],
+          function(error, results, fields) {
+            // error handling for deletion errors
+            if (error) return next(errorTranslation.joinGroup(error));
+            // check if a row was deleted
+            if (results.affectedRows === 0) {
+              // respond with no user in group
+              return next(new Error("Group not found"));
+            }
+            // respond with successfull delete
+            res.status(200).send("successfull");
+          }
+        );
+      } else {
+        // respond, that the user has the wrong permissions
+        next(new Error("wrong permissions or course not found"));
+      }
+    }
+  );
+});
+
+/**
  * function for joining a group in a group assignment
  */
 router.post("/joingroup", function(req, res, next) {
