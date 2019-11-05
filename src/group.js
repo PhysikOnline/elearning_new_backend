@@ -61,7 +61,7 @@ router.post("/deletegroup", function(req, res, next) {
               return next(new Error("Group not found"));
             }
             // respond with successfull delete
-            res.status(200).send("successfull");
+            res.status(200).send({ succsessfull: true });
           }
         );
       } else {
@@ -90,7 +90,7 @@ router.post("/joingroup", function(req, res, next) {
       if (error) return next(errorTranslation.joinGroup(error));
 
       // respond with successfull insert
-      res.status(200).send("successfull");
+      res.status(200).send({ succsessfull: true });
     }
   );
 });
@@ -119,7 +119,7 @@ router.post("/leavegroup", function(req, res, next) {
         );
       }
       // respond with successfull deletion
-      res.status(200).send("successfull");
+      res.status(200).send({ succsessfull: true });
     }
   );
 });
@@ -155,7 +155,7 @@ router.post("/insertorupdategroup", function(req, res, next) {
             // error handling for insert/update
             if (error) return next(errorTranslation.insertOrUpdateGroup(error));
             // respond with succsessfull login
-            res.status(200).send("successfull");
+            res.status(200).send({ succsessfull: true });
           }
         );
       } else {
@@ -182,7 +182,7 @@ router.post("/togglegroupvisibility", function(req, res, next) {
           // error handling
           if (error) return next(errorTranslation.toggleGroupVisibility(error));
           // successfull change
-          res.status(200).send("successfull");
+          res.status(200).send("succsessfull");
         }
       );
     } else {
