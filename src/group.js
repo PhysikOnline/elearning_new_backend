@@ -128,6 +128,22 @@ router.post("/leavegroup", function(req, res, next) {
  * function for inserting or updating a group
  */
 router.post("/insertorupdategroup", function(req, res, next) {
+  let tutor =
+    req.query.Tutor === null ||
+    req.query.Tutor === "" ||
+    req.query.Tutor === "null" ||
+    req.query.Tutor === "undefined" ||
+    !req.query.Tutor
+      ? "NULL"
+      : sql.escape(req.query.Tutor);
+  let OldGroupName =
+    req.query.OldGroupName === null ||
+    req.query.OldGroupName === "" ||
+    req.query.OldGroupName === "null" ||
+    req.query.OldGroupName === "undefined" ||
+    !req.query.OldGroupName
+      ? sql.escape(req.query.GroupName)
+      : sql.escape(req.query.OldGroupName);
   // check for user permissions in course
   permission(
     req.query.Semester,
@@ -138,12 +154,18 @@ router.post("/insertorupdategroup", function(req, res, next) {
       if (perm === "admin") {
         sql.query(
           // insert or update group
-          "INSERT INTO `Groups` (`CourseName`, `Semester`, `GroupName`, `Tutor`, `Starttime`, `Weekday`, `Endtime`, `Maxuser`, `Room`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `GroupName` = ?, `Tutor` = VALUES(`Tutor`), `Starttime` = VALUES(`Starttime`), `Weekday` = VALUES(`Weekday`), `Endtime` = VALUES(`Endtime`), `Maxuser` = VALUES(`Maxuser`), `Room` = VALUES(`Room`)",
+          "INSERT INTO `Groups` (`CourseName`, `Semester`, `GroupName`, `Tutor`, `Starttime`, `Weekday`, `Endtime`, `Maxuser`, `Room`) VALUES (?, ?, " +
+            OldGroupName +
+            ", " +
+            tutor +
+            ", ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `GroupName` = ?, `Tutor` = VALUES(`Tutor`), `Starttime` = VALUES(`Starttime`), `Weekday` = VALUES(`Weekday`), `Endtime` = VALUES(`Endtime`), `Maxuser` = VALUES(`Maxuser`), `Room` = VALUES(`Room`)",
           [
             req.query.CourseName,
             req.query.Semester,
-            req.query.OldGroupName,
-            req.query.Tutor,
+            // req.query.OldGroupName === "undefined"
+            //   ? req.query.OldGroupName
+            //   : req.query.GroupName,
+            // req.query.Tutor,
             req.query.Starttime,
             req.query.Weekday,
             req.query.Endtime,
