@@ -9,12 +9,14 @@ VALUES
     ("s0000005", PASSWORD("s0000005")),
     ("s0000006", PASSWORD("s0000006")),
     ("s0000007", PASSWORD("s0000007")),
-    ("s0000008", PASSWORD("s0000008"));
+    ("s0000008", PASSWORD("s0000008")),
+    ("s000009", PASSWORD("s000009"));
 
 INSERT INTO
     `Semester` (`Semester`, `Ordering`)
 VALUES
-    ("SoSe 19", 1),("WiSe 19/20", 2);
+    ("SoSe 19", 1),
+    ("WiSe 19/20", 2);
 
 INSERT INTO
     `Course` (`Name`, `Semester`, `Description`)
@@ -189,17 +191,11 @@ VALUES
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
         "Gruppe 1",
-        "s0000003"
-    ),
-    (
-        "Grundlagen in Mobbing 2",
-        "WiSe 19/20",
-        "Gruppe 1",
         "s0000004"
     ),
     (
         "Grundlagen in Mobbing 2",
         "WiSe 19/20",
-        "Gruppe 3",
+        "Gruppe 1",
         "s0000005"
     );

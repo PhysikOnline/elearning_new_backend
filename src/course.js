@@ -3,12 +3,50 @@ var router = express.Router();
 var sql = require("../db/db");
 
 var permission = require("./courseFunctions");
+var errorTranslation = require("../apiFunctions/errorTranslation");
 
 var group = require("./group");
 
 // middleware that is specific to this router
 router.use(function(req, res, next) {
   next();
+});
+
+/**
+ * function to join a course
+ */
+router.post("/joincourse", function(req, res, next) {
+  sql.query(
+    "INSERT INTO `CoursePermissions` (`Name`, `Semester`, `Login`, `Permissions`) VALUES (?, ?, ?, 'user')",
+    [req.query.CourseName, req.query.Semester, req.session.username],
+    function(error, results, fields) {
+      // error handling
+      if (error) return next(errorTranslation.joinCourse(error));
+      // respond with succsessfull
+      res.status(200).send({ succsessfull: true });
+    }
+  );
+});
+
+/**
+ * function to leave a course
+ */
+router.post("/leavecourse", function(req, res, next) {
+  sql.query(
+    "DELETE FROM `CoursePermissions` WHERE `Name` = ? AND `Semester` = ? AND `Login` = ? AND `Permissions` = 'user'",
+    [req.query.CourseName, req.query.Semester, req.session.username],
+    function(error, results, fields) {
+      // error handling
+      if (error) throw next(errorTranslation.leaveCourse(error));
+      // check if a row was deleted
+      if (results.affectedRows === 0) {
+        // respond with no course or user found
+        return next(new Error("user or course not found"));
+      }
+      // respond with succsessfull
+      res.status(200).send({ succsessfull: true });
+    }
+  );
 });
 
 /**

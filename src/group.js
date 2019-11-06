@@ -61,7 +61,7 @@ router.post("/deletegroup", function(req, res, next) {
               return next(new Error("Group not found"));
             }
             // respond with successfull delete
-            res.status(200).send("successfull");
+            res.status(200).send({ succsessfull: true });
           }
         );
       } else {
@@ -78,19 +78,27 @@ router.post("/deletegroup", function(req, res, next) {
 router.post("/joingroup", function(req, res, next) {
   sql.query(
     // insert user into group
-    "INSERT INTO `GroupUser` (`CourseName`,`Semester`,`GroupName`,`Login`) VALUES(?,?,?,?)",
+    "INSERT INTO `GroupUser` (`CourseName`,`Semester`,`GroupName`,`Login`) \
+    SELECT ?,?,?,? FROM `Course` WHERE \
+    (`GroupTimer` < CURRENT_TIMESTAMP AND `GroupTimerActive` OR `GroupVisible`) \
+    AND `Name` = ? AND `Semester` = ?",
     [
       req.query.CourseName,
       req.query.Semester,
       req.query.GroupName,
-      req.session.username
+      req.session.username,
+      req.query.CourseName,
+      req.query.Semester
     ],
     function(error, results, fields) {
       // error handling for insert errors
       if (error) return next(errorTranslation.joinGroup(error));
-
+      if (results.affectedRows === 0) {
+        // respond with no user in group
+        return next(new Error("did not joined group"));
+      }
       // respond with successfull insert
-      res.status(200).send("successfull");
+      res.status(200).send({ succsessfull: true });
     }
   );
 });
@@ -119,7 +127,7 @@ router.post("/leavegroup", function(req, res, next) {
         );
       }
       // respond with successfull deletion
-      res.status(200).send("successfull");
+      res.status(200).send({ succsessfull: true });
     }
   );
 });
@@ -128,6 +136,22 @@ router.post("/leavegroup", function(req, res, next) {
  * function for inserting or updating a group
  */
 router.post("/insertorupdategroup", function(req, res, next) {
+  let tutor =
+    req.query.Tutor === null ||
+    req.query.Tutor === "" ||
+    req.query.Tutor === "null" ||
+    req.query.Tutor === "undefined" ||
+    !req.query.Tutor
+      ? "NULL"
+      : sql.escape(req.query.Tutor);
+  let OldGroupName =
+    req.query.OldGroupName === null ||
+    req.query.OldGroupName === "" ||
+    req.query.OldGroupName === "null" ||
+    req.query.OldGroupName === "undefined" ||
+    !req.query.OldGroupName
+      ? sql.escape(req.query.GroupName)
+      : sql.escape(req.query.OldGroupName);
   // check for user permissions in course
   permission(
     req.query.Semester,
@@ -138,12 +162,18 @@ router.post("/insertorupdategroup", function(req, res, next) {
       if (perm === "admin") {
         sql.query(
           // insert or update group
-          "INSERT INTO `Groups` (`CourseName`, `Semester`, `GroupName`, `Tutor`, `Starttime`, `Weekday`, `Endtime`, `Maxuser`, `Room`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `GroupName` = ?, `Tutor` = VALUES(`Tutor`), `Starttime` = VALUES(`Starttime`), `Weekday` = VALUES(`Weekday`), `Endtime` = VALUES(`Endtime`), `Maxuser` = VALUES(`Maxuser`), `Room` = VALUES(`Room`)",
+          "INSERT INTO `Groups` (`CourseName`, `Semester`, `GroupName`, `Tutor`, `Starttime`, `Weekday`, `Endtime`, `Maxuser`, `Room`) VALUES (?, ?, " +
+            OldGroupName +
+            ", " +
+            tutor +
+            ", ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `GroupName` = ?, `Tutor` = VALUES(`Tutor`), `Starttime` = VALUES(`Starttime`), `Weekday` = VALUES(`Weekday`), `Endtime` = VALUES(`Endtime`), `Maxuser` = VALUES(`Maxuser`), `Room` = VALUES(`Room`)",
           [
             req.query.CourseName,
             req.query.Semester,
-            req.query.OldGroupName,
-            req.query.Tutor,
+            // req.query.OldGroupName === "undefined"
+            //   ? req.query.OldGroupName
+            //   : req.query.GroupName,
+            // req.query.Tutor,
             req.query.Starttime,
             req.query.Weekday,
             req.query.Endtime,
@@ -155,7 +185,7 @@ router.post("/insertorupdategroup", function(req, res, next) {
             // error handling for insert/update
             if (error) return next(errorTranslation.insertOrUpdateGroup(error));
             // respond with succsessfull login
-            res.status(200).send("successfull");
+            res.status(200).send({ succsessfull: true });
           }
         );
       } else {
@@ -182,7 +212,7 @@ router.post("/togglegroupvisibility", function(req, res, next) {
           // error handling
           if (error) return next(errorTranslation.toggleGroupVisibility(error));
           // successfull change
-          res.status(200).send("successfull");
+          res.status(200).send("succsessfull");
         }
       );
     } else {

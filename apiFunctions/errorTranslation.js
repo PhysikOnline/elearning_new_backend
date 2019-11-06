@@ -8,7 +8,9 @@ errorTranslation = {
   leaveGroup: require("./errorTranslation/leaveGroup"),
   deleteGroup: require("./errorTranslation/deleteGroup"),
   assignedGroup: require("./errorTranslation/assignedGroup"),
-  currentCourses: require("./errorTranslation/currentCourses")
+  currentCourses: require("./errorTranslation/currentCourses"),
+  joinCourse: require("./errorTranslation/joinCourse"),
+  leaveCourse: require("./errorTranslation/leaveCourse")
 };
 
 module.exports = errorTranslation;
