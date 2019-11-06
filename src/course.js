@@ -27,6 +27,28 @@ router.post("/joincourse", function(req, res, next) {
     }
   );
 });
+
+/**
+ * function to leave a course
+ */
+router.post("/leavecourse", function(req, res, next) {
+  sql.query(
+    "DELETE FROM `CoursePermissions` WHERE `Name` = ? AND `Semester` = ? AND `Login` = ? AND `Permissions` = 'user'",
+    [req.query.CourseName, req.query.Semester, req.session.username],
+    function(error, results, fields) {
+      // error handling
+      if (error) throw next(errorTranslation.leaveCourse(error));
+      // check if a row was deleted
+      if (results.affectedRows === 0) {
+        // respond with no course or user found
+        return next(new Error("user or course not found"));
+      }
+      // respond with succsessfull
+      res.status(200).send({ succsessfull: true });
+    }
+  );
+});
+
 /**
  * function to change the descripotion of the course
  */
