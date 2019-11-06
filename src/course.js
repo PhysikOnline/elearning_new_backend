@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var sql = require("../db/db");
+var fs = require("fs");
 
 var permission = require("./courseFunctions");
 var errorTranslation = require("../apiFunctions/errorTranslation");
@@ -10,6 +11,19 @@ var group = require("./group");
 // middleware that is specific to this router
 router.use(function(req, res, next) {
   next();
+});
+
+/**
+ * download pdf test
+ */
+router.get("/download", function(req, res, next) {
+  fs.readFile("data/Sheet-2-en.pdf", function(err, data) {
+    if (err) throw err;
+    res.contentType("application/pdf");
+    res.send(data);
+
+    console.log(data);
+  });
 });
 
 /**
