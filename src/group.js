@@ -78,17 +78,25 @@ router.post("/deletegroup", function(req, res, next) {
 router.post("/joingroup", function(req, res, next) {
   sql.query(
     // insert user into group
-    "INSERT INTO `GroupUser` (`CourseName`,`Semester`,`GroupName`,`Login`) VALUES(?,?,?,?)",
+    "INSERT INTO `GroupUser` (`CourseName`,`Semester`,`GroupName`,`Login`) \
+    SELECT ?,?,?,? FROM `Course` WHERE \
+    (`GroupTimer` < CURRENT_TIMESTAMP AND `GroupTimerActive` OR `GroupVisible`) \
+    AND `Name` = ? AND `Semester` = ?",
     [
       req.query.CourseName,
       req.query.Semester,
       req.query.GroupName,
-      req.session.username
+      req.session.username,
+      req.query.CourseName,
+      req.query.Semester
     ],
     function(error, results, fields) {
       // error handling for insert errors
       if (error) return next(errorTranslation.joinGroup(error));
-
+      if (results.affectedRows === 0) {
+        // respond with no user in group
+        return next(new Error("did not joined group"));
+      }
       // respond with successfull insert
       res.status(200).send({ succsessfull: true });
     }
