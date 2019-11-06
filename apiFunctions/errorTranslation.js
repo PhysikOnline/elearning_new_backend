@@ -7,7 +7,7 @@ errorTranslation = {
   joinGroup: require("./errorTranslation/joinGroup"),
   leaveGroup: require("./errorTranslation/leaveGroup"),
   deleteGroup: require("./errorTranslation/deleteGroup"),
-  assignedGroup: require("./errorTranslation/assignedGroup")
+  joinCourse: require("./errorTranslation/joinCourse"),
 };
 
 module.exports = errorTranslation;

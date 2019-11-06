@@ -3,6 +3,7 @@ var router = express.Router();
 var sql = require("../db/db");
 
 var permission = require("./courseFunctions");
+var errorTranslation = require("../apiFunctions/errorTranslation");
 
 var group = require("./group");
 
@@ -11,6 +12,21 @@ router.use(function(req, res, next) {
   next();
 });
 
+/**
+ * function to join a course
+ */
+router.post("/joincourse", function(req, res, next) {
+  sql.query(
+    "INSERT INTO `CoursePermissions` (`Name`, `Semester`, `Login`, `Permissions`) VALUES (?, ?, ?, 'user')",
+    [req.query.CourseName, req.query.Semester, req.session.username],
+    function(error, results, fields) {
+      // error handling
+      if (error) return next(errorTranslation.joinCourse(error));
+      // respond with succsessfull
+      res.status(200).send({ succsessfull: true });
+    }
+  );
+});
 /**
  * function to change the descripotion of the course
  */
