@@ -61,6 +61,17 @@ router.post("/logout", function(req, res) {
   }
 });
 
+router.get("/user/currentcourses", function(req, res, next) {
+  sql.query(
+    // get current courses of user
+    "select distinct CourseName from Groups where Tutor= ? IN (select Name from CoursePermissions where Login= ?)",
+    [req.session.username],
+    function(error, results, fields) {
+      console.log("....");
+    }
+  );
+});
+
 /**
  * function for checking the current sesseion status
  */
