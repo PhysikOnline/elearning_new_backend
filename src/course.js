@@ -17,13 +17,19 @@ router.use(function(req, res, next) {
  * download pdf test
  */
 router.get("/download", function(req, res, next) {
-  fs.readFile("data/Sheet-2-en.pdf", function(err, data) {
-    if (err) throw err;
-    res.contentType("application/pdf");
-    res.send(data);
+  var file = fs.createReadStream("data/sample.pdf");
 
-    console.log(data);
+  // var stat = fs.statSync("data/sample.pdf");
+  res.writeHead(200, {
+    "Content-Type": "application/pdf",
+    "Content-Disposition": "attachment; filename=some_file.pdf"
+    // 'Content-Length': data.length
   });
+  // setResponseHeaders(res, "quote.pdf");
+  // res.setHeader("Content-Length", stat.size);
+  // res.setHeader("Content-Type", "application/pdf");
+  // res.setHeader("Content-Disposition", "attachment; filename=quote.pdf");
+  file.pipe(res);
 });
 
 /**
