@@ -14,9 +14,42 @@ router.use(function(req, res, next) {
 });
 
 /**
+ * get all file names for the course
+ */
+router.get("/filenames", function(req, res, next) {
+  permission(req.query.Semester, req.query.Name, req.session.username, function(
+    perm
+  ) {
+    if (perm === "admin" || perm === "user" || perm === "tutor") {
+      fs.readdir(
+        "data/" +
+          req.query.Semester.replace("/", " ") +
+          "/" +
+          req.query.Name +
+          "/exersice/",
+        (err, exersice) => {
+          fs.readdir(
+            "data/" +
+              req.query.Semester.replace("/", " ") +
+              "/" +
+              req.query.Name +
+              "/script/",
+            (err, script) => {
+              res.send({ script: script, exersice: exersice });
+            }
+          );
+        }
+      );
+    } else {
+      next(new Error("wrong permissions or course not found"));
+    }
+  });
+});
+
+/**
  * download pdf test
  */
-router.get("/download", function(req, res, next) {
+router.get("/pdf", function(req, res, next) {
   var file = fs.createReadStream("data/sample.pdf");
 
   // var stat = fs.statSync("data/sample.pdf");
