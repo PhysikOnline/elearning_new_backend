@@ -41,7 +41,10 @@ router.get("/filenames", function(req, res, next) {
               req.query.Name +
               "/script/",
             (err, script) => {
-              res.status(200).send({ script: script, exercise: exercise });
+              res.status(200).send({
+                script: script ? script : [],
+                exercise: exercise ? exercise : []
+              });
             }
           );
         }
@@ -62,6 +65,29 @@ router.post("/pdf", function(req, res, next) {
   ) {
     // allow user, admin and tutor access to pdf's
     if (perm === "admin") {
+      // check if directory exists, otherwise create it
+      if (
+        !fs.existsSync(
+          "data/" +
+            req.query.Semester.replace("/", " ") +
+            "/" +
+            req.query.Name +
+            "/" +
+            req.query.subfolder +
+            "/"
+        )
+      ) {
+        fs.mkdirSync(
+          "data/" +
+            req.query.Semester.replace("/", " ") +
+            "/" +
+            req.query.Name +
+            "/" +
+            req.query.subfolder +
+            "/",
+          { recursive: true }
+        );
+      }
       // ensure that just the exercise and script folder can be accessed
       if (
         req.query.subfolder !== "exercise" &&
@@ -79,12 +105,12 @@ router.post("/pdf", function(req, res, next) {
           "/" +
           req.query.subfolder +
           "/",
-        (err, script) => {
+        (err, subfolder) => {
           // parsing file in request
           upload(req, res, function(error) {
             if (error) throw error;
             // check that file exists
-            if (!script.includes(req.file.originalname)) {
+            if (!subfolder.includes(req.file.originalname)) {
               // chek, if file in buffer is pdf
               pdf(req.file.buffer).then(
                 // file is pdf
