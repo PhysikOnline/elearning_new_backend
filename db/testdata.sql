@@ -1,16 +1,82 @@
 INSERT INTO
-    `User` (`Login`, `password`)
+    `User` (
+        `Login`,
+        `password`,
+        `email`,
+        `firstname`,
+        `lastname`
+    )
 VALUES
-    ("s0000000", PASSWORD("s0000000")),
-    ("s0000001", PASSWORD("s0000001")),
-    ("s0000002", PASSWORD("s0000002")),
-    ("s0000003", PASSWORD("s0000003")),
-    ("s0000004", PASSWORD("s0000004")),
-    ("s0000005", PASSWORD("s0000005")),
-    ("s0000006", PASSWORD("s0000006")),
-    ("s0000007", PASSWORD("s0000007")),
-    ("s0000008", PASSWORD("s0000008")),
-    ("s000009", PASSWORD("s000009"));
+    (
+        "s0000000",
+        PASSWORD("s0000000"),
+        "s0000000@uni-frankfurt.de",
+        "Hans",
+        "Bauer"
+    ),
+    (
+        "s0000001",
+        PASSWORD("s0000001"),
+        "s0000001@uni-frankfurt.de",
+        "Hansi",
+        "Baueri"
+    ),
+    (
+        "s0000002",
+        PASSWORD("s0000002"),
+        "s0000002@uni-frankfurt.de",
+        "Hansii",
+        "Bauerii"
+    ),
+    (
+        "s0000003",
+        PASSWORD("s0000003"),
+        "s0000003@uni-frankfurt.de",
+        "Hansiii",
+        "Baueriii"
+    ),
+    (
+        "s0000004",
+        PASSWORD("s0000004"),
+        "s0000004@uni-frankfurt.de",
+        "Hansiv",
+        "Baueriv"
+    ),
+    (
+        "s0000005",
+        PASSWORD("s0000005"),
+        "s0000005@uni-frankfurt.de",
+        "Hansv",
+        "Bauerv"
+    ),
+    (
+        "s0000006",
+        PASSWORD("s0000006"),
+        "s0000006@uni-frankfurt.de",
+        "Hansvi",
+        "Bauervi"
+    ),
+    (
+        "s0000007",
+        PASSWORD("s0000007"),
+        "s0000007@uni-frankfurt.de",
+        "Hansvii",
+        "Bauervii"
+    ),
+    (
+        "s0000008",
+        PASSWORD("s0000008"),
+        "s0000008@uni-frankfurt.de",
+        "Hansix",
+        "Bauerix"
+    ),
+    (
+        "s000009",
+        PASSWORD("s000009"),
+        "s0000009@uni-frankfurt.de",
+        "Hansx",
+        "Bauerx"
+    );
 
 INSERT INTO
     `Semester` (`Semester`, `Ordering`)

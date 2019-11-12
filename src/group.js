@@ -3,10 +3,52 @@ var router = express.Router();
 var sql = require("../db/db");
 var permission = require("./courseFunctions");
 var errorTranslation = require("../apiFunctions/errorTranslation");
+var { parse } = require("json2csv");
 
 // middleware that is specific to this router
 router.use(function(req, res, next) {
   next();
+});
+
+/**
+ * function for getting a group user csv
+ */
+router.get("/groupcsv", function(req, res, next) {
+  // check for user permissions in course
+  permission(
+    req.query.Semester,
+    req.query.CourseName,
+    req.session.username,
+    function(perm) {
+      if (perm === "admin" || perm == "tutor") {
+        sql.query(
+          // delete group
+          "SELECT U.`firstname`, U.`lastname`, U.`Login`, U.`email` FROM `GroupUser` as G, `User` as U WHERE G.`CourseName`=? AND G.`Semester`=? AND G.`GroupName`=? AND U.`Login`=G.`Login`",
+          [req.query.CourseName, req.query.Semester, req.query.GroupName],
+          function(error, results, fields) {
+            // error handling for deletion errors
+            if (error) return next(errorTranslation.joinGroup(error));
+            // respond with successfull delete
+            try {
+              const csv = parse(results, [
+                "firstname",
+                "lastname",
+                "Login",
+                "email"
+              ]);
+              res.attachment(req.query.GroupName + ".csv");
+              res.status(200).send(csv);
+            } catch (err) {
+              next(err);
+            }
+          }
+        );
+      } else {
+        // respond, that the user has the wrong permissions
+        next(new Error("wrong permissions or course not found"));
+      }
+    }
+  );
 });
 
 /**

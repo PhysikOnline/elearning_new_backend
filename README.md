@@ -11,6 +11,15 @@
 - MySQL Workbench
 - Postman
 
+# Packages we use
+
+- express-mysql-session
+- express-session
+- json2csv
+- multer
+- mysql
+- pdf-parse
+
 # Before you start
 
 Make shure, that you inserted your firstname in "database" under `./db/credentials.js`. So when you firstname is Albert, it should look like this:

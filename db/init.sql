@@ -26,6 +26,9 @@ DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` (
   `Login` char(8) NOT NULL,
   `password` char(41) NULL,
+  `email` char(255) NOT NULL,
+  `firstname` char(255) NOT NULL,
+  `lastname` char(255) NOT NULL,
   PRIMARY KEY (`Login`),
   CHECK(`Login` RLIKE "^[a-z0-9]{1,8}$")
 );
