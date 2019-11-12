@@ -10,7 +10,8 @@ errorTranslation = {
   assignedGroup: require("./errorTranslation/assignedGroup"),
   currentCourses: require("./errorTranslation/currentCourses"),
   joinCourse: require("./errorTranslation/joinCourse"),
-  leaveCourse: require("./errorTranslation/leaveCourse")
+  leaveCourse: require("./errorTranslation/leaveCourse"),
+  pdf: require("./errorTranslation/pdf")
 };
 
 module.exports = errorTranslation;

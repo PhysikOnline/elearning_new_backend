@@ -2,11 +2,17 @@ var express = require("express");
 var router = express.Router();
 var sql = require("../db/db");
 var fs = require("fs");
+var pdf = require("pdf-parse");
 
 var permission = require("./courseFunctions");
 var errorTranslation = require("../apiFunctions/errorTranslation");
 
 var group = require("./group");
+
+// import multer for file parsing
+var multer = require("multer");
+var storage = multer.memoryStorage();
+var upload = multer({ storage: storage }).single("file");
 
 // middleware that is specific to this router
 router.use(function(req, res, next) {
@@ -26,8 +32,8 @@ router.get("/filenames", function(req, res, next) {
           req.query.Semester.replace("/", " ") +
           "/" +
           req.query.Name +
-          "/exersice/",
-        (err, exersice) => {
+          "/exercise/",
+        (err, exercise) => {
           fs.readdir(
             "data/" +
               req.query.Semester.replace("/", " ") +
@@ -35,7 +41,7 @@ router.get("/filenames", function(req, res, next) {
               req.query.Name +
               "/script/",
             (err, script) => {
-              res.send({ script: script, exersice: exersice });
+              res.status(200).send({ script: script, exercise: exercise });
             }
           );
         }
@@ -47,22 +53,196 @@ router.get("/filenames", function(req, res, next) {
 });
 
 /**
+ * add pdf test
+ */
+router.post("/pdf", function(req, res, next) {
+  // user authentication
+  permission(req.query.Semester, req.query.Name, req.session.username, function(
+    perm
+  ) {
+    // allow user, admin and tutor access to pdf's
+    if (perm === "admin") {
+      // ensure that just the exercise and script folder can be accessed
+      if (
+        req.query.subfolder !== "exercise" &&
+        req.query.subfolder !== "script"
+      ) {
+        // respond that this subfolder is not alloesd
+        return next(new Error("this subfolder is not allowed"));
+      }
+      // read all files in subdir for existance checking
+      fs.readdir(
+        "data/" +
+          req.query.Semester.replace("/", " ") +
+          "/" +
+          req.query.Name +
+          "/" +
+          req.query.subfolder +
+          "/",
+        (err, script) => {
+          // parsing file in request
+          upload(req, res, function(error) {
+            if (error) throw error;
+            // check that file exists
+            if (!script.includes(req.file.originalname)) {
+              // chek, if file in buffer is pdf
+              pdf(req.file.buffer).then(
+                // file is pdf
+                function(data) {
+                  fs.writeFile(
+                    "data/" +
+                      req.query.Semester.replace("/", " ") +
+                      "/" +
+                      req.query.Name +
+                      "/" +
+                      req.query.subfolder +
+                      "/" +
+                      req.file.originalname,
+                    req.file.buffer,
+                    function(err) {
+                      if (err) throw err;
+                      res.status(200).send({ succsessfull: true });
+                    }
+                  );
+                },
+                // file is not pdf
+                function(err) {
+                  return next(new Error("file is not a pdf"));
+                }
+              );
+              // delete file
+            } else {
+              // throw error, that file does not exists
+              next(new Error("file already exists"));
+            }
+          });
+        }
+      );
+    } else {
+      // throw permissions or course does not exist error
+      next(new Error("wrong permissions or course not found"));
+    }
+  });
+});
+
+/**
+ * delete pdf test
+ */
+router.delete("/pdf", function(req, res, next) {
+  // user authentication
+  permission(req.query.Semester, req.query.Name, req.session.username, function(
+    perm
+  ) {
+    // allow user, admin and tutor access to pdf's
+    if (perm === "admin") {
+      // ensure that just the exercise and script folder can be accessed
+      if (
+        req.query.subfolder !== "exercise" &&
+        req.query.subfolder !== "script"
+      ) {
+        // respond that this subfolder is not alloesd
+        return next(new Error("this subfolder is not allowed"));
+      }
+      // read all files in subdir for existance checking
+      fs.readdir(
+        "data/" +
+          req.query.Semester.replace("/", " ") +
+          "/" +
+          req.query.Name +
+          "/" +
+          req.query.subfolder +
+          "/",
+        (err, script) => {
+          // check that file exists
+          if (script.includes(req.query.file)) {
+            // delete file
+            fs.unlink(
+              "data/" +
+                req.query.Semester.replace("/", " ") +
+                "/" +
+                req.query.Name +
+                "/" +
+                req.query.subfolder +
+                "/" +
+                req.query.file,
+              function(error) {
+                // error handling
+                if (error) return next(error);
+                // respond with sucsessfull deletion
+                res.status(200).send({ succsessfull: true });
+              }
+            );
+          } else {
+            // throw error, that file does not exists
+            next(new Error("file does not exist"));
+          }
+        }
+      );
+    } else {
+      // throw permissions or course does not exist error
+      next(new Error("wrong permissions or course not found"));
+    }
+  });
+});
+
+/**
  * download pdf test
  */
 router.get("/pdf", function(req, res, next) {
-  var file = fs.createReadStream("data/sample.pdf");
-
-  // var stat = fs.statSync("data/sample.pdf");
-  res.writeHead(200, {
-    "Content-Type": "application/pdf",
-    "Content-Disposition": "attachment; filename=some_file.pdf"
-    // 'Content-Length': data.length
+  // user authentication
+  permission(req.query.Semester, req.query.Name, req.session.username, function(
+    perm
+  ) {
+    // allow user, admin and tutor access to pdf's
+    if (perm === "user" || perm === "admin" || perm === "tutor") {
+      // ensure that just the exercise and script folder can be accessed
+      if (
+        req.query.subfolder !== "exercise" &&
+        req.query.subfolder !== "script"
+      ) {
+        // respond that this subfolder is not alloesd
+        return next(new Error("this subfolder is not allowed"));
+      }
+      // read all files in subdir for existance checking
+      fs.readdir(
+        "data/" +
+          req.query.Semester.replace("/", " ") +
+          "/" +
+          req.query.Name +
+          "/" +
+          req.query.subfolder +
+          "/",
+        (err, script) => {
+          // check that file exists
+          if (script.includes(req.query.file)) {
+            // create file stream
+            var file = fs.createReadStream(
+              "data/" +
+                req.query.Semester.replace("/", " ") +
+                "/" +
+                req.query.Name +
+                "/" +
+                req.query.subfolder +
+                "/" +
+                req.query.file
+            );
+            // error heandling for create read stream
+            file.on("error", function(error) {
+              return next(errorTranslation.pdf(error));
+            });
+            // send stream to res
+            file.pipe(res);
+          } else {
+            // throw error, that file does not exists
+            next(new Error("file does not exist"));
+          }
+        }
+      );
+    } else {
+      // throw permissions or course does not exist error
+      next(new Error("wrong permissions or course not found"));
+    }
   });
-  // setResponseHeaders(res, "quote.pdf");
-  // res.setHeader("Content-Length", stat.size);
-  // res.setHeader("Content-Type", "application/pdf");
-  // res.setHeader("Content-Disposition", "attachment; filename=quote.pdf");
-  file.pipe(res);
 });
 
 /**

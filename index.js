@@ -12,6 +12,8 @@ var user = require("./src/user");
 var course = require("./src/course");
 // import mysql credentials
 const credentials = require("./db/credentials");
+const bodyParser = require("body-parser");
+app.use(bodyParser());
 
 // define the store of our sessions (it is our database)
 var sessionStore = new MySQLStore({
