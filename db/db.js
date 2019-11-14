@@ -3,16 +3,15 @@
 var mysql = require("mysql");
 // import fs for reading in the database initialisation
 var fs = require("fs");
-//; import credentials for the database connection
-const credentials = require("./credentials");
+var update = require("./update");
 
 // create a connection pool, to handle multiple connections to the databse
 var pool = mysql.createPool({
-  host: credentials.host,
-  user: credentials.user,
-  port: credentials.port,
-  password: credentials.password,
-  database: credentials.database,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: process.env.DB_PORT,
+  password: process.env.DB_PASS,
+  database: process.env.DB_DATA,
   multipleStatements: true
 });
 
@@ -22,7 +21,10 @@ pool.getConnection(function(err, connection) {
   // error handling
   if (err) throw err;
 
+  if (process.env.NODE_ENV === "development") {
+    console.log("App is Starting in development");
   // Execute the database initialisation
+    process.stdout.write("Initializing database");
   connection.query(fs.readFileSync("db/init.sql").toString(), function(
     error,
     results,
@@ -30,7 +32,8 @@ pool.getConnection(function(err, connection) {
   ) {
     // error hanling
     if (error) throw error;
-    console.log("finished initializing database");
+      process.stdout.write(" - done\n");
+      process.stdout.write("Filling database with testdata");
   });
 
   // fill the databse with test data
@@ -41,8 +44,9 @@ pool.getConnection(function(err, connection) {
   ) {
     // error handling
     if (error) throw error;
-    console.log("finished filling database");
+      process.stdout.write(" - done\n");
   });
+  }
   // release the connection back to the pool so other functions can use it again
   connection.release();
 });

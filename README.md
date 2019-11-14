@@ -21,19 +21,27 @@
 - pdf-parse
 - compression
 - helmet
+- dotenv
 
 # Before you start
 
-Make shure, that you inserted your firstname in "database" under `./db/credentials.js`. So when you firstname is Albert, it should look like this:
+Make shure, that you created a `.env` file in your root directory, with the content:
 
-````js
-const options = {
-    host: '141.2.246.162',
-    user: 'elearning',
-    port: '3306',
-    password: 'elearningpw',
-    database: 'albert',
-};
+```
+# define development enviroment
+NODE_ENV=development
+
+# database connection
+DB_HOST=141.2.246.162
+DB_USER=elearning
+DB_PORT=3306
+DB_PASS=elearningpw
+DB_DATA=elearning
+```
+
+if the database is realy busy, you can change the database name to your firstname.
+
+Please **do not commit the `.env` file**. With this method, I want to prevent, that we are starting the development server on the live system, because this will remove all the data in the databse.
 
 # Database Tutorial
 
@@ -41,7 +49,7 @@ The connetion of the database is specified inside `/db/db.js`. The database init
 
 ```js
 var sql = require("./db/db.js");
-````
+```
 
 queries can the be executed with:
 

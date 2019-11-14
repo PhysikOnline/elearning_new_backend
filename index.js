@@ -1,3 +1,4 @@
+require("dotenv").config();
 // import express
 const express = require("express");
 const app = express();
@@ -20,11 +21,11 @@ app.use(helmet());
 
 // define the store of our sessions (it is our database)
 var sessionStore = new MySQLStore({
-  host: credentials.host,
-  user: credentials.user,
-  port: credentials.port,
-  password: credentials.password,
-  database: credentials.database
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: process.env.DB_PORT,
+  password: process.env.DB_PASS,
+  database: process.env.DB_DATA
 });
 
 // make the app use the session management
