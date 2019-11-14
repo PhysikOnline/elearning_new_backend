@@ -19,6 +19,8 @@
 - multer
 - mysql
 - pdf-parse
+- compression
+- helmet
 
 # Before you start
 

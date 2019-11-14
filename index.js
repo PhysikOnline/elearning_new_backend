@@ -11,9 +11,12 @@ var MySQLStore = require("express-mysql-session")(session);
 var user = require("./src/user");
 var course = require("./src/course");
 // import mysql credentials
-const credentials = require("./db/credentials");
-// const bodyParser = require("body-parser");
-// app.use(bodyParser());
+// for compremizing the web request
+var compression = require("compression");
+app.use(compression());
+// security package
+var helmet = require("helmet");
+app.use(helmet());
 
 // define the store of our sessions (it is our database)
 var sessionStore = new MySQLStore({
