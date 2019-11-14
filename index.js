@@ -53,8 +53,8 @@ app.use(
 );
 
 // setup router
-app.use("/user", user);
-app.use("/course", course);
+app.use("/api/user", user);
+app.use("/api/course", course);
 
 // errorHandling Middleware
 app.use(errorHandling);
