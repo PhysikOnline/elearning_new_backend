@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 // import database
 var sql = require("../db/db");
+var errorTranslation = require("../apiFunctions/errorTranslation");
 
 // middleware that is specific to this router
 router.use(function(req, res, next) {
@@ -61,13 +62,16 @@ router.post("/logout", function(req, res) {
   }
 });
 
-router.get("/user/currentcourses", function(req, res, next) {
+router.get("/currentcourses", function(req, res, next) {
   sql.query(
     // get current courses of user
     "select distinct CourseName from Groups where Tutor= ? IN (select Name from CoursePermissions where Login= ?)",
-    [req.session.username],
+    [req.session.username, req.session.username],
     function(error, results, fields) {
-      console.log("....");
+      if (error) {
+        return next(errorTranslation.currentCourses(error));
+      }
+      res.status(200).send(results);
     }
   );
 });
