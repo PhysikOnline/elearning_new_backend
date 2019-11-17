@@ -1,3 +1,4 @@
+require("dotenv").config();
 // import express
 const express = require("express");
 const app = express();
@@ -11,15 +12,20 @@ var MySQLStore = require("express-mysql-session")(session);
 var user = require("./src/user");
 var course = require("./src/course");
 // import mysql credentials
-const credentials = require("./db/credentials");
+// for compremizing the web request
+var compression = require("compression");
+app.use(compression());
+// security package
+var helmet = require("helmet");
+app.use(helmet());
 
 // define the store of our sessions (it is our database)
 var sessionStore = new MySQLStore({
-  host: credentials.host,
-  user: credentials.user,
-  port: credentials.port,
-  password: credentials.password,
-  database: credentials.database
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: process.env.DB_PORT,
+  password: process.env.DB_PASS,
+  database: process.env.DB_DATA
 });
 
 // make the app use the session management
@@ -47,8 +53,8 @@ app.use(
 );
 
 // setup router
-app.use("/user", user);
-app.use("/course", course);
+app.use("/api/user", user);
+app.use("/api/course", course);
 
 // errorHandling Middleware
 app.use(errorHandling);

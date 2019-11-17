@@ -22,10 +22,26 @@ DROP TABLE IF EXISTS `Semester`;
 
 DROP TABLE IF EXISTS `User`;
 
+DROP TABLE IF EXISTS `Settings`;
+
 -- DROP TABLE IF EXISTS `Sessions`;
+CREATE TABLE `Settings` (
+  `key` char(255) NOT NULL,
+  `value` char(255) NOT NULL,
+  PRIMARY KEY (`key`)
+);
+
+INSERT INTO
+  `Settings` (`key`, `value`)
+VALUES
+  ("version", "1");
+
 CREATE TABLE `User` (
   `Login` char(8) NOT NULL,
   `password` char(41) NULL,
+  `email` char(255) NOT NULL,
+  `firstname` char(255) NOT NULL,
+  `lastname` char(255) NOT NULL,
   PRIMARY KEY (`Login`),
   CHECK(`Login` RLIKE "^[a-z0-9]{1,8}$")
 );
